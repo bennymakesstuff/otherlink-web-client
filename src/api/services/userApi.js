@@ -84,11 +84,11 @@ export class UserApi extends BaseApi {
 
   /**
    * Update user profile information
-   * @param {Object} profileData - Updated profile data
+   * @param {Object} profileData - {first_name, last_name}
    * @returns {Promise<Object>} - Updated user data
    */
   async updateProfile(profileData) {
-    return this.put('/user/profile', profileData);
+    return this.post('/user/profile', profileData);
   }
 
   /**

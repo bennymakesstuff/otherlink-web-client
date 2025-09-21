@@ -114,7 +114,7 @@ export const LoginTest = () => {
         <div class="api-info">
           <strong>API Mode:</strong> {API.getMode()} | 
           <strong>Authenticated:</strong> {authStore.isAuthenticated ? '✅' : '❌'}
-          {authStore.user && <span> | <strong>User:</strong> {authStore.user.firstName} {authStore.user.lastName}</span>}
+          {authStore.user && <span> | <strong>User:</strong> {authStore.user.full_name || `${authStore.user.first_name || ''} ${authStore.user.last_name || ''}`.trim()}</span>}
           {API.isReal() && (
             <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #dc2626;">
               <strong>Note:</strong> Real API mode - update test credentials in the code or use your actual login credentials

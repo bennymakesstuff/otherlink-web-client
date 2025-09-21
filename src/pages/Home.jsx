@@ -16,7 +16,7 @@ export const Home = () => {
           </div>
           <div class="status-item">
             <strong>Authentication:</strong> {authStore.isAuthenticated ? '✅ Logged In' : '❌ Not Logged In'}
-            {authStore.user && <span> as {authStore.user.firstName} {authStore.user.lastName}</span>}
+            {authStore.user && <span> as {authStore.user.full_name || `${authStore.user.first_name || ''} ${authStore.user.last_name || ''}`.trim()}</span>}
           </div>
         </div>
         

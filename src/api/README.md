@@ -25,10 +25,10 @@ await API.user.register({
   lastName: 'Doe'
 });
 
-// Update profile
+// Update profile (first_name and last_name only)
 const updatedUser = await API.user.updateProfile({
-  firstName: 'Jane',
-  email: 'jane@example.com'
+  first_name: 'Jane',
+  last_name: 'Smith'
 });
 
 // Response format from login:
@@ -94,7 +94,7 @@ export const API_CONFIG = {
 
 #### Profile Management
 - `getProfile()` - Get user profile
-- `updateProfile(profileData)` - Update profile
+- `updateProfile({first_name, last_name})` - Update profile (excludes email)
 - `getPreferences()` - Get user preferences
 - `updatePreferences(preferences)` - Update preferences
 
@@ -116,10 +116,12 @@ When in mock mode, you can use these test accounts:
 // Regular user
 username: 'testuser'
 password: 'password123'
+// User data: {id: 1, username: 'testuser', first_name: 'John', last_name: 'Doe', full_name: 'John Doe'}
 
-// Admin user
+// Admin user  
 username: 'admin'
 password: 'admin123'
+// User data: {id: 2, username: 'admin', first_name: 'Jane', last_name: 'Admin', full_name: 'Jane Admin'}
 ```
 
 Access mock data:

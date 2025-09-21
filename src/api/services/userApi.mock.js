@@ -63,9 +63,9 @@ export class MockUserApi {
     this.storage.users.set('admin', {
       id: 2,
       username: 'admin',
-      email: 'admin@example.com',
-      firstName: 'Jane',
-      lastName: 'Admin',
+      first_name: 'Jane',
+      last_name: 'Admin',
+      full_name: 'Jane Admin',
       password: 'admin123',
       roles: [
         {
@@ -184,9 +184,9 @@ export class MockUserApi {
     const newUser = {
       id: Date.now(),
       username: userData.username,
-      email: userData.email,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
+      first_name: userData.firstName,
+      last_name: userData.lastName,
+      full_name: `${userData.firstName || ''} ${userData.lastName || ''}`.trim(),
       password: userData.password,
       roles: [
         {
@@ -322,7 +322,7 @@ export class MockUserApi {
 
     // Update password
     user.password = resetData.password;
-    this.storage.users.set(user.email, user);
+    this.storage.users.set(user.username, user);
 
     // Remove used reset token
     this.storage.resetTokens.delete(resetData.token);
@@ -352,12 +352,27 @@ export class MockUserApi {
       throw new Error('User not found');
     }
 
-    // Update user data
-    Object.assign(user, profileData);
+    // Update user data - server uses snake_case
+    if (profileData.first_name !== undefined) {
+      user.first_name = profileData.first_name;
+    }
+    if (profileData.last_name !== undefined) {
+      user.last_name = profileData.last_name;
+    }
+    // Update full_name when first/last name changes
+    if (profileData.first_name !== undefined || profileData.last_name !== undefined) {
+      user.full_name = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+    }
+    
     this.storage.users.set(user.username, user);
 
     const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    return { 
+      status: true,
+      status_message: 'Success',
+      message: 'Profile updated successfully',
+      user: userWithoutPassword
+    };
   }
 
   /**

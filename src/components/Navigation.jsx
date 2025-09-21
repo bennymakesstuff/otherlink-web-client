@@ -63,10 +63,10 @@ export const Navigation = () => {
               <div class="user-menu">
                 <div class="user-info">
                   <div class="user-avatar">
-                    {authStore.user?.firstName?.[0]}{authStore.user?.lastName?.[0]}
+                    {authStore.user?.first_name?.[0]}{authStore.user?.last_name?.[0]}
                   </div>
                   <span class="user-name">
-                    {authStore.user?.firstName} {authStore.user?.lastName}
+                    {authStore.user?.full_name || `${authStore.user?.first_name || ''} ${authStore.user?.last_name || ''}`.trim()}
                   </span>
                 </div>
                 <button 

@@ -6,9 +6,8 @@ export const Profile = () => {
   const user = () => authStore.user;
   const [isEditing, setIsEditing] = createSignal(false);
   const [formData, setFormData] = createSignal({
-    firstName: user()?.firstName || '',
-    lastName: user()?.lastName || '',
-    email: user()?.email || '',
+    first_name: user()?.first_name || '',
+    last_name: user()?.last_name || '',
   });
   const [isLoading, setIsLoading] = createSignal(false);
   const [message, setMessage] = createSignal('');
@@ -23,9 +22,11 @@ export const Profile = () => {
     setMessage('');
 
     try {
-      const updatedUser = await API.user.updateProfile(formData());
+      await API.user.updateProfile({
+        first_name: formData().first_name,
+        last_name: formData().last_name
+      });
       
-      // Note: You might want to add a method to update user data in authStore
       setMessage('Profile updated successfully!');
       setIsEditing(false);
     } catch (error) {
@@ -37,9 +38,8 @@ export const Profile = () => {
 
   const cancelEdit = () => {
     setFormData({
-      firstName: user()?.firstName || '',
-      lastName: user()?.lastName || '',
-      email: user()?.email || '',
+      first_name: user()?.first_name || '',
+      last_name: user()?.last_name || '',
     });
     setIsEditing(false);
     setMessage('');
@@ -62,7 +62,7 @@ export const Profile = () => {
         <div class="profile-card">
           <div class="profile-avatar">
             <div class="avatar-placeholder">
-              {user()?.firstName?.[0]}{user()?.lastName?.[0]}
+              {user()?.first_name?.[0]}{user()?.last_name?.[0]}
             </div>
           </div>
 
@@ -73,8 +73,8 @@ export const Profile = () => {
                 <input
                   type="text"
                   id="firstName"
-                  value={formData().firstName}
-                  onInput={(e) => updateFormData('firstName', e.target.value)}
+                  value={formData().first_name}
+                  onInput={(e) => updateFormData('first_name', e.target.value)}
                   disabled={!isEditing() || isLoading()}
                   required
                 />
@@ -85,25 +85,15 @@ export const Profile = () => {
                 <input
                   type="text"
                   id="lastName"
-                  value={formData().lastName}
-                  onInput={(e) => updateFormData('lastName', e.target.value)}
+                  value={formData().last_name}
+                  onInput={(e) => updateFormData('last_name', e.target.value)}
                   disabled={!isEditing() || isLoading()}
                   required
                 />
               </div>
             </div>
 
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                value={formData().email}
-                onInput={(e) => updateFormData('email', e.target.value)}
-                disabled={!isEditing() || isLoading()}
-                required
-              />
-            </div>
+            {/* Email management moved to separate section */}
 
             <div class="form-actions">
               {!isEditing() ? (
@@ -174,6 +164,11 @@ export const Profile = () => {
                 <span>{user().username}</span>
               </div>
             )}
+            
+            <div class="info-item">
+              <label>Full Name</label>
+              <span>{user()?.full_name || 'Not set'}</span>
+            </div>
           </div>
         </div>
       </div>

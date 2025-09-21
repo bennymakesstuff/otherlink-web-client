@@ -12,7 +12,7 @@ export const Dashboard = () => {
     <div class="dashboard-page">
       <header class="dashboard-header">
         <h1>Dashboard</h1>
-        <p>Welcome back, {user()?.firstName || 'User'}!</p>
+        <p>Welcome back, {user()?.first_name || 'User'}!</p>
       </header>
       
       <div class="dashboard-content">
@@ -20,8 +20,8 @@ export const Dashboard = () => {
           <div class="dashboard-card">
             <h3>Profile Information</h3>
             <div class="profile-info">
-              <p><strong>Name:</strong> {user()?.firstName} {user()?.lastName}</p>
-              <p><strong>Email:</strong> {user()?.email}</p>
+              <p><strong>Name:</strong> {user()?.full_name || `${user()?.first_name || ''} ${user()?.last_name || ''}`.trim()}</p>
+              <p><strong>Username:</strong> {user()?.username}</p>
               <p><strong>Roles:</strong> {getUserRoles()}</p>
             </div>
             <A href="/profile" class="btn btn-secondary">Edit Profile</A>
