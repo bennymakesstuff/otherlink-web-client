@@ -90,13 +90,18 @@ export const API_CONFIG = {
 #### Password Management
 - `forgotPassword(email)` - Request password reset
 - `resetPassword({token, password})` - Reset password
-- `changePassword({currentPassword, newPassword})` - Change password
+- `changePassword({current_password, new_password, confirm_password})` - Change password
 
 #### Profile Management
 - `getProfile()` - Get user profile
 - `updateProfile(profileData)` - Update profile
 - `getPreferences()` - Get user preferences
 - `updatePreferences(preferences)` - Update preferences
+
+#### Session Management
+- `getSessions()` - Get all user sessions with device info
+- `revokeSession(sessionId, currentRefreshToken)` - Revoke specific session by ID
+- `revokeAllSessions()` - Revoke all other sessions
 
 #### Advanced
 - `getRolesAndPermissions()` - Get user roles/permissions
@@ -139,6 +144,23 @@ try {
     console.error('Login failed:', error.message);
   }
   // error.status contains HTTP status code (real API only)
+}
+
+// Password change with specific error handling
+try {
+  await API.user.changePassword({
+    current_password: 'oldPassword123',
+    new_password: 'newSecurePassword456',
+    confirm_password: 'newSecurePassword456'
+  });
+  console.log('Password changed successfully');
+} catch (error) {
+  if (error.status === 400) {
+    // Server validation errors (current password incorrect, passwords don't match, etc.)
+    console.error('Password change failed:', error.message);
+  } else {
+    console.error('Unexpected error:', error.message);
+  }
 }
 ```
 

@@ -112,7 +112,6 @@ export const authStore = {
     try {
       // Try to validate current access token
       const response = await API.user.validateToken(currentAccessToken);
-      console.log('Token validation response:', response);
       
       // Handle validation response format (might be different from login)
       let validatedUser;
@@ -128,7 +127,6 @@ export const authStore = {
         setUser(validatedUser);
         return true;
       } else {
-        console.warn('No user data in validation response');
         return false;
       }
     } catch (error) {

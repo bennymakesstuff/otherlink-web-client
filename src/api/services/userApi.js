@@ -93,11 +93,11 @@ export class UserApi extends BaseApi {
 
   /**
    * Change user password
-   * @param {Object} passwordData - {currentPassword, newPassword}
+   * @param {Object} passwordData - {current_password, new_password, confirm_password}
    * @returns {Promise<Object>} - Change password response
    */
   async changePassword(passwordData) {
-    return this.post('/user/change-password', passwordData);
+    return this.post('/password/change', passwordData);
   }
 
   /**
@@ -144,5 +144,36 @@ export class UserApi extends BaseApi {
    */
   async getPreferences() {
     return this.get('/user/preferences');
+  }
+
+  // Session Management
+  
+  /**
+   * Get all user sessions
+   * @returns {Promise<Object>} - List of user sessions
+   */
+  async getSessions() {
+    return this.get('/user/sessions');
+  }
+
+  /**
+   * Revoke all sessions except current
+   * @returns {Promise<Object>} - Success response
+   */
+  async revokeAllSessions() {
+    return this.post('/user/sessions/revoke-all');
+  }
+
+  /**
+   * Revoke a specific session by session ID
+   * @param {number} sessionId - The session ID to revoke
+   * @param {string} currentRefreshToken - The current refresh token for authentication
+   * @returns {Promise<Object>} - Success response
+   */
+  async revokeSession(sessionId, currentRefreshToken) {
+    return this.post('/token/revoke', { 
+      session_id: sessionId,
+      refresh_token: currentRefreshToken
+    });
   }
 }

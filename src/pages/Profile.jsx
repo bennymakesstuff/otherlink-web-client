@@ -143,9 +143,13 @@ export const Profile = () => {
             <div class="info-item">
               <label>User Roles</label>
               <div class="roles-list">
-                {user()?.roles?.map(role => (
-                  <span class="role-badge">{role.name}</span>
-                )) || <span class="no-roles">No roles assigned</span>}
+                {user()?.roles?.length > 0 ? (
+                  user().roles.map(role => (
+                    <span class="role-badge">{role.name}</span>
+                  ))
+                ) : (
+                  <span class="no-roles">No roles assigned</span>
+                )}
               </div>
             </div>
             
@@ -158,6 +162,18 @@ export const Profile = () => {
               <label>Last Login</label>
               <span>{user()?.lastLogin ? new Date(user().lastLogin).toLocaleDateString() : 'Unknown'}</span>
             </div>
+            
+            <div class="info-item">
+              <label>User ID</label>
+              <span>#{user()?.id || 'Unknown'}</span>
+            </div>
+            
+            {user()?.username && (
+              <div class="info-item">
+                <label>Username</label>
+                <span>{user().username}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

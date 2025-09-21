@@ -18,20 +18,11 @@ export const Login = () => {
         password: password()
       });
       
-      console.log('Login successful, auth state:', {
-        isAuthenticated: authStore.isAuthenticated,
-        hasAccessToken: !!authStore.accessToken,
-        hasUser: !!authStore.user,
-        user: authStore.user
-      });
+      // Login successful - auth state updated
       
       // Small delay to ensure auth state is fully updated
       setTimeout(() => {
-        // Navigate to auth test first to debug the state
-        navigate('/auth-test');
-        
-        // Uncomment this and comment the line above once debugging is complete:
-        // navigate('/dashboard');
+        navigate('/dashboard');
       }, 100);
       
     } catch (err) {

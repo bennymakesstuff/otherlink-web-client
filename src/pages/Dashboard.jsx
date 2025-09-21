@@ -30,10 +30,28 @@ export const Dashboard = () => {
           <div class="dashboard-card">
             <h3>Quick Actions</h3>
             <div class="quick-actions">
-              <A href="/settings" class="action-link">⚙️ Settings</A>
-              <A href="/profile" class="action-link">👤 Profile</A>
+              <A href="/profile" class="action-link">
+                <span class="action-icon">👤</span>
+                <div>
+                  <div class="action-title">Profile</div>
+                  <div class="action-desc">Manage your account</div>
+                </div>
+              </A>
+              <A href="/settings" class="action-link">
+                <span class="action-icon">⚙️</span>
+                <div>
+                  <div class="action-title">Settings</div>
+                  <div class="action-desc">Privacy & security</div>
+                </div>
+              </A>
               {authStore.hasRole('admin') && (
-                <A href="/admin" class="action-link">🔧 Admin Panel</A>
+                <A href="/admin" class="action-link">
+                  <span class="action-icon">🔧</span>
+                  <div>
+                    <div class="action-title">Admin Panel</div>
+                    <div class="action-desc">System management</div>
+                  </div>
+                </A>
               )}
             </div>
           </div>

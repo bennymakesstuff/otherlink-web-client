@@ -367,14 +367,43 @@ export class MockUserApi {
     await this.simulateApiCall();
 
     const user = this.storage.users.get('testuser');
-    if (!user || user.password !== passwordData.currentPassword) {
-      throw new Error('Current password is incorrect');
+    
+    // Validate required fields
+    if (!passwordData.current_password || !passwordData.new_password || !passwordData.confirm_password) {
+      const error = new Error('All password fields are required');
+      error.status = 400;
+      throw error;
+    }
+    
+    // Check password confirmation
+    if (passwordData.new_password !== passwordData.confirm_password) {
+      const error = new Error('New password confirmation does not match');
+      error.status = 400;
+      throw error;
+    }
+    
+    // Check password length
+    if (passwordData.new_password.length < 8) {
+      const error = new Error('New password must be at least 8 characters long');
+      error.status = 400;
+      throw error;
+    }
+    
+    // Check current password
+    if (!user || user.password !== passwordData.current_password) {
+      const error = new Error('Current password is incorrect');
+      error.status = 400;
+      throw error;
     }
 
-    user.password = passwordData.newPassword;
+    user.password = passwordData.new_password;
     this.storage.users.set(user.username, user);
 
-    return { message: 'Password changed successfully' };
+    return { 
+      status: true,
+      status_message: 'Success',
+      message: 'Password changed successfully' 
+    };
   }
 
   /**
@@ -464,5 +493,131 @@ export class MockUserApi {
 
     const user = this.getUserByUsername('testuser');
     return user?.preferences || {};
+  }
+
+  // Session Management
+
+  /**
+   * Mock get sessions - matches server response format
+   */
+  async getSessions() {
+    await this.simulateApiCall();
+
+    const now = new Date();
+    const formatDate = (date) => {
+      return date.toISOString().slice(0, 19).replace('T', ' ');
+    };
+
+    // Create mock sessions that match the enhanced server format
+    const mockSessions = [
+      {
+        id: 1,
+        created_at: formatDate(new Date(now - 1000 * 60 * 30)), // 30 mins ago
+        expires_at: formatDate(new Date(now + 1000 * 60 * 60 * 24 * 30)), // 30 days from now
+        ip_address: "192.168.1.100",
+        location: "San Francisco, CA",
+        device: {
+          browser: "Chrome",
+          browser_version: "119.0",
+          os: "macOS",
+          os_version: "14.0",
+          device_type: "Desktop",
+          is_mobile: false
+        },
+        description: "Chrome 119.0 on macOS 14.0 (Desktop)",
+        is_current: true
+      },
+      {
+        id: 2,
+        created_at: formatDate(new Date(now - 1000 * 60 * 60 * 2)), // 2 hours ago
+        expires_at: formatDate(new Date(now + 1000 * 60 * 60 * 24 * 28)), // 28 days from now
+        ip_address: "192.168.1.101",
+        location: "San Francisco, CA",
+        device: {
+          browser: "Safari",
+          browser_version: "17.0",
+          os: "iOS",
+          os_version: "17.0",
+          device_type: "Mobile",
+          is_mobile: true
+        },
+        description: "Safari 17.0 on iOS 17.0 (Mobile)",
+        is_current: false
+      },
+      {
+        id: 3,
+        created_at: formatDate(new Date(now - 1000 * 60 * 60 * 24)), // 1 day ago
+        expires_at: formatDate(new Date(now + 1000 * 60 * 60 * 24 * 29)), // 29 days from now
+        ip_address: "10.0.0.50",
+        location: "New York, NY",
+        device: {
+          browser: "Chrome",
+          browser_version: "140.0",
+          os: "Windows",
+          os_version: "11",
+          device_type: "Desktop",
+          is_mobile: false
+        },
+        description: "Chrome 140.0 on Windows 11 (Desktop)",
+        is_current: false
+      },
+      {
+        id: 4,
+        created_at: formatDate(new Date(now - 1000 * 60 * 60 * 24 * 7)), // 7 days ago
+        expires_at: formatDate(new Date(now + 1000 * 60 * 60 * 24 * 23)), // 23 days from now
+        ip_address: "127.0.0.1",
+        location: "Local Network",
+        device: {
+          browser: "Chrome",
+          browser_version: "140.0",
+          os: "Android",
+          os_version: "6.0",
+          device_type: "Mobile",
+          is_mobile: true
+        },
+        description: "Chrome 140.0 on Android 6.0 (Mobile)",
+        is_current: false
+      }
+    ];
+    
+    return {
+      status: true,
+      status_message: "Success",
+      message: "Active sessions retrieved",
+      data: {
+        active_sessions: mockSessions.length,
+        sessions: mockSessions
+      }
+    };
+  }
+
+  /**
+   * Mock revoke all sessions
+   */
+  async revokeAllSessions() {
+    await this.simulateApiCall();
+    return { 
+      status: true,
+      status_message: "Success",
+      message: 'All other sessions revoked successfully' 
+    };
+  }
+
+  /**
+   * Mock revoke specific session
+   */
+  async revokeSession(sessionId, currentRefreshToken) {
+    await this.simulateApiCall();
+    
+    // Validate that we have both parameters
+    if (!sessionId || !currentRefreshToken) {
+      throw new Error('Both session ID and current refresh token are required');
+    }
+    
+    return { 
+      status: true,
+      status_message: "Success", 
+      message: 'Session revoked successfully'
+    };
   }
 }

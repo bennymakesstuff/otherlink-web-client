@@ -17,24 +17,15 @@ export const AuthGuard = (props) => {
 
   createEffect(async () => {
     if (!isInitialized()) {
-      console.log('AuthGuard checking authentication:', {
-        isAuthenticated: authStore.isAuthenticated,
-        hasAccessToken: !!authStore.accessToken,
-        hasUser: !!authStore.user
-      });
-      
       // If user is already authenticated (just logged in), don't validate again
       if (authStore.isAuthenticated) {
-        console.log('AuthGuard: User already authenticated, skipping validation');
         setIsValid(true);
         setIsInitialized(true);
         return;
       }
       
       // Otherwise, validate and refresh tokens
-      console.log('AuthGuard: Validating tokens...');
       const valid = await authStore.validateAndRefresh();
-      console.log('AuthGuard: Token validation result:', valid);
       setIsValid(valid);
       setIsInitialized(true);
     }
