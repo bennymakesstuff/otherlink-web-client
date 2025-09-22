@@ -14,6 +14,13 @@ export const Settings = () => {
   const [sessions, setSessions] = createSignal([]);
   const [sessionsLoading, setSessionsLoading] = createSignal(true);
   const [sessionMessage, setSessionMessage] = createSignal('');
+
+  // 2FA management
+  const [twoFactorEnabled, setTwoFactorEnabled] = createSignal(false);
+  const [twoFactorLoading, setTwoFactorLoading] = createSignal(true);
+  const [twoFactorMessage, setTwoFactorMessage] = createSignal('');
+  const [twoFactorError, setTwoFactorError] = createSignal('');
+  const [enabledAt, setEnabledAt] = createSignal('');
   
   const [passwordData, setPasswordData] = createSignal({
     current_password: '',
@@ -86,6 +93,7 @@ export const Settings = () => {
   // Load sessions on component mount
   onMount(async () => {
     await loadSessions();
+    await load2FAStatus();
   });
 
   const loadSessions = async () => {
@@ -230,6 +238,70 @@ export const Settings = () => {
     }
   };
 
+  // 2FA Functions
+  const load2FAStatus = async () => {
+    try {
+      const response = await API.user.get2FAStatus();
+      setTwoFactorEnabled(response.two_factor_enabled);
+      setEnabledAt(response.enabled_at);
+    } catch (error) {
+      console.error('Failed to load 2FA status:', error);
+      setTwoFactorError('Failed to load 2FA status');
+    } finally {
+      setTwoFactorLoading(false);
+    }
+  };
+
+  const handleEnable2FA = async () => {
+    setTwoFactorMessage('');
+    setTwoFactorError('');
+    setTwoFactorLoading(true);
+
+    try {
+      const response = await API.user.enable2FA();
+      setTwoFactorEnabled(true);
+      setEnabledAt(response.enabled_at);
+      setTwoFactorMessage(response.message || 'Two-factor authentication enabled successfully');
+    } catch (error) {
+      console.error('Failed to enable 2FA:', error);
+      setTwoFactorError(error.message || 'Failed to enable two-factor authentication');
+    } finally {
+      setTwoFactorLoading(false);
+    }
+  };
+
+  const handleDisable2FA = async () => {
+    const confirmed = confirm('Are you sure you want to disable two-factor authentication? This will make your account less secure.');
+    if (!confirmed) return;
+
+    setTwoFactorMessage('');
+    setTwoFactorError('');
+    setTwoFactorLoading(true);
+
+    try {
+      const response = await API.user.disable2FA();
+      setTwoFactorEnabled(false);
+      setEnabledAt(null);
+      setTwoFactorMessage(response.message || 'Two-factor authentication disabled successfully');
+    } catch (error) {
+      console.error('Failed to disable 2FA:', error);
+      setTwoFactorError(error.message || 'Failed to disable two-factor authentication');
+    } finally {
+      setTwoFactorLoading(false);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   return (
     <div class="settings-page">
       <div class="settings-container">
@@ -247,6 +319,80 @@ export const Settings = () => {
         <div class="settings-section">
           <h2>Security</h2>
           
+          <div class="settings-card">
+            <h3>Two-Factor Authentication</h3>
+            <p>Add an extra layer of security to your account by requiring a verification code from your email.</p>
+            
+            <Show when={twoFactorLoading()}>
+              <div class="loading-sessions">
+                <div class="loading-spinner"></div>
+                <p>Loading 2FA status...</p>
+              </div>
+            </Show>
+
+            <Show when={!twoFactorLoading()}>
+              {twoFactorMessage() && (
+                <div class="success-message">
+                  {twoFactorMessage()}
+                </div>
+              )}
+
+              {twoFactorError() && (
+                <div class="error-message">
+                  {twoFactorError()}
+                </div>
+              )}
+
+              <div class="two-factor-status">
+                <div class="status-indicator">
+                  <span class={`status-dot ${twoFactorEnabled() ? 'enabled' : 'disabled'}`}></span>
+                  <span class="status-text">
+                    Two-factor authentication is <strong>{twoFactorEnabled() ? 'enabled' : 'disabled'}</strong>
+                  </span>
+                </div>
+                
+                {twoFactorEnabled() && enabledAt() && (
+                  <p class="enabled-date">
+                    Enabled on {formatDate(enabledAt())}
+                  </p>
+                )}
+              </div>
+
+              <div class="two-factor-actions">
+                {twoFactorEnabled() ? (
+                  <button 
+                    type="button" 
+                    class="btn btn-danger"
+                    onClick={handleDisable2FA}
+                    disabled={twoFactorLoading()}
+                  >
+                    {twoFactorLoading() ? 'Disabling...' : 'Disable 2FA'}
+                  </button>
+                ) : (
+                  <button 
+                    type="button" 
+                    class="btn btn-primary"
+                    onClick={handleEnable2FA}
+                    disabled={twoFactorLoading()}
+                  >
+                    {twoFactorLoading() ? 'Enabling...' : 'Enable 2FA'}
+                  </button>
+                )}
+              </div>
+
+              {!twoFactorEnabled() && (
+                <div class="two-factor-info">
+                  <h4>How it works:</h4>
+                  <ul>
+                    <li>When you sign in, we'll send a verification code to your email</li>
+                    <li>Enter the code to complete your sign-in</li>
+                    <li>Your account will be protected even if someone has your password</li>
+                  </ul>
+                </div>
+              )}
+            </Show>
+          </div>
+
           <div class="settings-card">
             <h3>Change Password</h3>
             <p>Update your account password for better security.</p>

@@ -38,7 +38,14 @@ export const authStore = {
     try {
       const response = await API.user.login(credentials);
       
-      // Handle response format: Symfony server format
+      // Check for 2FA requirement BEFORE trying to extract tokens
+      const responseData = response.data || response;
+      if (responseData.two_factor_required) {
+        console.log('2FA required - returning response without setting tokens');
+        return response; // Return early for 2FA handling in Login.jsx
+      }
+      
+      // Handle response format: Symfony server format (only when 2FA not required)
       let accessToken, refreshToken, user;
       
       if (response.data && response.data.tokens) {
@@ -169,6 +176,16 @@ export const authStore = {
     } finally {
       setIsLoading(false);
     }
+  },
+
+  // Set authenticated user (used after 2FA verification)
+  async setAuthenticatedUser(userData, accessTokenValue, refreshTokenValue) {
+    setAccessToken(accessTokenValue);
+    setRefreshToken(refreshTokenValue);
+    setUser(userData);
+    
+    localStorage.setItem('accessToken', accessTokenValue);
+    localStorage.setItem('refreshToken', refreshTokenValue);
   },
 
   // Initialize auth state on app start

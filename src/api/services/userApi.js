@@ -102,6 +102,48 @@ export class UserApi extends BaseApi {
   }
 
   /**
+   * Verify 2FA code
+   * @param {Object} verificationData - {session_id, code}
+   * @returns {Promise<Object>} - Verification response with tokens
+   */
+  async verify2FA(verificationData) {
+    return this.post('/2fa/verify', verificationData);
+  }
+
+  /**
+   * Resend 2FA code
+   * @param {string} sessionId - 2FA session ID
+   * @returns {Promise<Object>} - Resend response
+   */
+  async resend2FA(sessionId) {
+    return this.post('/2fa/resend', { session_id: sessionId });
+  }
+
+  /**
+   * Get 2FA status for current user
+   * @returns {Promise<Object>} - 2FA status response
+   */
+  async get2FAStatus() {
+    return this.get('/2fa/status');
+  }
+
+  /**
+   * Enable 2FA for current user
+   * @returns {Promise<Object>} - Enable response
+   */
+  async enable2FA() {
+    return this.post('/2fa/enable');
+  }
+
+  /**
+   * Disable 2FA for current user
+   * @returns {Promise<Object>} - Disable response
+   */
+  async disable2FA() {
+    return this.post('/2fa/disable');
+  }
+
+  /**
    * Get current user profile
    * @returns {Promise<Object>} - User profile data
    */

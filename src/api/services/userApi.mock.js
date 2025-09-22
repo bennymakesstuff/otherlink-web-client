@@ -57,7 +57,9 @@ export class MockUserApi {
 
     this.storage.users.set('testuser', {
       ...testUser,
-      password: 'password123' // In real app, this would be hashed
+      password: 'password123', // In real app, this would be hashed
+      two_factor_enabled: false,
+      two_factor_enabled_at: null
     });
 
     // Add more test users
@@ -84,6 +86,8 @@ export class MockUserApi {
         emailNotifications: true,
         showActivityFeed: false,
       },
+      two_factor_enabled: true,
+      two_factor_enabled_at: '2023-01-01T00:00:00Z',
       createdAt: '2023-12-01T00:00:00Z',
       lastLogin: new Date(Date.now() - 86400000).toISOString(), // Yesterday
     });
@@ -153,15 +157,42 @@ export class MockUserApi {
 
     const user = this.storage.users.get(credentials.username);
     if (!user || user.password !== credentials.password) {
-      throw new Error('Invalid username or password');
+      const error = new Error('Credentials are incorrect');
+      error.status = 401;
+      throw error;
     }
 
+    // Simulate 2FA requirement for admin user (you can change this logic)
+    if (credentials.username === 'admin') {
+      // Return 2FA required response in server format
+      return {
+        status: true,
+        status_message: "Success",
+        message: "Two-factor authentication required. Please check your email for the verification code.",
+        data: {
+          two_factor_required: true,
+          session_id: `2fa-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          expires_in: 600,
+          user: {
+            id: user.id,
+            username: user.username,
+            first_name: user.first_name,
+            last_name: user.last_name
+          }
+        }
+      };
+    }
+
+    // Simulate normal login (no 2FA)
     const tokens = this.generateTokens(user);
     const { password, ...userWithoutPassword } = user;
 
     return {
-      ...tokens,
-      user: userWithoutPassword
+      user: userWithoutPassword,
+      tokens: {
+        access_token: tokens.accessToken,
+        refresh_token: tokens.refreshToken
+      }
     };
   }
 
@@ -466,6 +497,136 @@ export class MockUserApi {
         last_name: user.last_name,
         email_verified: true
       }
+    };
+  }
+
+  /**
+   * Mock verify 2FA
+   */
+  async verify2FA(verificationData) {
+    await this.simulateApiCall();
+
+    const { session_id, code } = verificationData;
+
+    // Mock validation - accept "123456" as valid code
+    if (code !== '123456') {
+      const error = new Error('Invalid verification code');
+      error.status = 400;
+      throw error;
+    }
+
+    // Mock successful 2FA verification - return tokens
+    const accessToken = `mock-access-${Date.now()}`;
+    const refreshToken = `mock-refresh-${Date.now()}`;
+
+    // Get test user for mock response
+    const user = this.getUserByUsername('testuser');
+
+    // Return in server response format to match real API
+    return {
+      status: true,
+      status_message: "Success",
+      message: "Authentication successful",
+      data: {
+        user: {
+          id: user.id,
+          username: user.username,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          full_name: user.full_name,
+          two_factor_enabled: true,
+          roles: user.roles
+        },
+        tokens: {
+          access_token: accessToken,
+          refresh_token: refreshToken,
+          token_type: 'Bearer',
+          expires_in: 900
+        }
+      }
+    };
+  }
+
+  /**
+   * Mock resend 2FA
+   */
+  async resend2FA(sessionId) {
+    await this.simulateApiCall();
+
+    return {
+      session_id: sessionId,
+      expires_in: 600,
+      message: 'New verification code sent to your email'
+    };
+  }
+
+  /**
+   * Mock get 2FA status
+   */
+  async get2FAStatus() {
+    await this.simulateApiCall();
+
+    const user = this.getUserByUsername('testuser');
+    if (!user) {
+      const error = new Error('User not found');
+      error.status = 404;
+      throw error;
+    }
+
+    return {
+      two_factor_enabled: user.two_factor_enabled || false,
+      enabled_at: user.two_factor_enabled_at || null,
+      email: user.email
+    };
+  }
+
+  /**
+   * Mock enable 2FA
+   */
+  async enable2FA() {
+    await this.simulateApiCall();
+
+    const user = this.getUserByUsername('testuser');
+    if (!user) {
+      const error = new Error('User not found');
+      error.status = 404;
+      throw error;
+    }
+
+    // Update user to have 2FA enabled
+    user.two_factor_enabled = true;
+    user.two_factor_enabled_at = new Date().toISOString();
+    this.storage.users.set(user.username, user);
+
+    return {
+      two_factor_enabled: true,
+      enabled_at: user.two_factor_enabled_at,
+      message: 'Two-factor authentication enabled successfully'
+    };
+  }
+
+  /**
+   * Mock disable 2FA
+   */
+  async disable2FA() {
+    await this.simulateApiCall();
+
+    const user = this.getUserByUsername('testuser');
+    if (!user) {
+      const error = new Error('User not found');
+      error.status = 404;
+      throw error;
+    }
+
+    // Update user to have 2FA disabled
+    user.two_factor_enabled = false;
+    user.two_factor_enabled_at = null;
+    this.storage.users.set(user.username, user);
+
+    return {
+      two_factor_enabled: false,
+      enabled_at: null,
+      message: 'Two-factor authentication disabled successfully'
     };
   }
 

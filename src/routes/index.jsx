@@ -17,6 +17,7 @@ const ResetComplete = lazy(() => import('../pages/ResetComplete').then(m => ({ d
 const ResetExpired = lazy(() => import('../pages/ResetExpired').then(m => ({ default: m.ResetExpired })));
 const VerificationSent = lazy(() => import('../pages/VerificationSent').then(m => ({ default: m.VerificationSent })));
 const VerifyEmail = lazy(() => import('../pages/VerifyEmail').then(m => ({ default: m.VerifyEmail })));
+const TwoFactorVerify = lazy(() => import('../pages/TwoFactorVerify').then(m => ({ default: m.TwoFactorVerify })));
 const Dashboard = lazy(() => import('../pages/Dashboard').then(m => ({ default: m.Dashboard })));
 const Profile = lazy(() => import('../pages/Profile').then(m => ({ default: m.Profile })));
 const Settings = lazy(() => import('../pages/Settings').then(m => ({ default: m.Settings })));
@@ -117,6 +118,12 @@ export const AppRouter = () => {
       <Route path="/verify-email" component={() => (
         <Layout>
           <VerifyEmail />
+        </Layout>
+      )} />
+      
+      <Route path="/2fa-verify" component={() => (
+        <Layout>
+          <TwoFactorVerify />
         </Layout>
       )} />
       

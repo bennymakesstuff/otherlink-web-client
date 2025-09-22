@@ -96,6 +96,34 @@ export const API_CONFIG = {
 #### Email Verification
 - `verifyEmail(token)` - Verify email address with token
 
+#### Two-Factor Authentication
+- `verify2FA({session_id, code})` - Verify 2FA code and get tokens
+- `resend2FA(sessionId)` - Resend 2FA verification code
+- `get2FAStatus()` - Get current 2FA status for user
+- `enable2FA()` - Enable 2FA for current user
+- `disable2FA()` - Disable 2FA for current user
+
+**2FA Flow:**
+1. User logs in with username/password
+2. If 2FA required, server returns: `{status: true, message: "...", data: {two_factor_required: true, session_id: "...", expires_in: 600, user: {...}}}`
+3. Navigate to `/2fa-verify` with session data
+4. User enters 6-digit code from email
+5. Call `verify2FA({session_id, code})` 
+6. On success, receive tokens: `{status: true, message: "Authentication successful", data: {user: {...}, tokens: {access_token: "...", refresh_token: "..."}}}`
+7. Navigate to dashboard
+
+**2FA Settings Management:**
+- Users can enable/disable 2FA in Settings page
+- Status shows enabled/disabled state with enable date
+- Enable/disable requires user confirmation
+- Settings automatically update after changes
+
+**Mock API Testing:**
+- Login with username `admin` to trigger 2FA flow
+- Login with username `testuser` for normal flow (no 2FA)
+- Use code `123456` for successful 2FA verification in mock mode
+- Test enable/disable 2FA in Settings page
+
 #### Password Management (continued)
 - `changePassword({current_password, new_password, confirm_password})` - Change password
 

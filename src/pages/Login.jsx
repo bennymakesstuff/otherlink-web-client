@@ -18,7 +18,26 @@ export const Login = () => {
         password: password()
       });
       
-      // Login successful - auth state updated
+      // Check if 2FA is required - handle server response format
+      const twoFactorData = response.data || response;
+      if (twoFactorData.two_factor_required) {
+        console.log('2FA required, navigating to verification page');
+        console.log('2FA data:', twoFactorData);
+        
+        // Navigate to 2FA verification page with session data
+        navigate('/2fa-verify', {
+          state: {
+            twoFactorData: {
+              session_id: twoFactorData.session_id,
+              expires_in: twoFactorData.expires_in,
+              user: twoFactorData.user
+            }
+          }
+        });
+        return;
+      }
+      
+      // Login successful without 2FA - auth state updated
       
       // Small delay to ensure auth state is fully updated
       setTimeout(() => {
