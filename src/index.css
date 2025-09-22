@@ -437,6 +437,16 @@ body {
   margin-bottom: 0.5rem;
 }
 
+.redirect-notice {
+  background: var(--color-bg-secondary);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  border-left: 3px solid var(--color-primary);
+}
+
 /* Password reset page styles */
 .form-help {
   font-size: 0.75rem;

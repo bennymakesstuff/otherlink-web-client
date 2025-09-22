@@ -279,13 +279,13 @@ export class MockUserApi {
   /**
    * Mock forgot password
    */
-  async forgotPassword(email) {
+  async forgotPassword(username) {
     await this.simulateApiCall();
 
-    const user = this.getUserByEmail(email);
+    const user = this.getUserByUsername(username);
     if (!user) {
       // Don't reveal if user exists or not
-      return { message: 'If an account exists with this email, you will receive reset instructions.' };
+      return { message: 'If an account exists with this username, you will receive reset instructions.' };
     }
 
     const resetToken = `reset-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -295,7 +295,7 @@ export class MockUserApi {
     });
 
     return { 
-      message: 'Password reset instructions sent to your email',
+      message: 'Password reset instructions sent to your registered email address',
       resetToken // In real app, this would be sent via email
     };
   }
@@ -328,6 +328,79 @@ export class MockUserApi {
     this.storage.resetTokens.delete(resetData.token);
 
     return { message: 'Password reset successfully' };
+  }
+
+  /**
+   * Mock validate reset token
+   */
+  async validateResetToken(token) {
+    await this.simulateApiCall();
+
+    const resetInfo = this.storage.resetTokens.get(token);
+
+    if (!resetInfo || resetInfo.expires < Date.now()) {
+      const error = new Error('Reset token is invalid or expired');
+      error.status = 400;
+      throw error;
+    }
+
+    const user = Array.from(this.storage.users.values())
+      .find(u => u.id === resetInfo.userId);
+
+    if (!user) {
+      const error = new Error('User not found');
+      error.status = 404;
+      throw error;
+    }
+
+    return { 
+      message: 'Token is valid',
+      valid: true,
+      expires_at: new Date(resetInfo.expires).toISOString()
+    };
+  }
+
+  /**
+   * Mock complete password reset
+   */
+  async completePasswordReset(resetData) {
+    await this.simulateApiCall();
+
+    const { token, password, password_confirm } = resetData;
+
+    if (password !== password_confirm) {
+      const error = new Error('Passwords do not match');
+      error.status = 400;
+      throw error;
+    }
+
+    const tokenData = this.storage.resetTokens.get(token);
+    if (!tokenData || tokenData.expires < Date.now()) {
+      const error = new Error('Reset token is invalid or expired');
+      error.status = 400;
+      throw error;
+    }
+
+    const user = Array.from(this.storage.users.values())
+      .find(u => u.id === tokenData.userId);
+
+    if (!user) {
+      const error = new Error('User not found');
+      error.status = 404;
+      throw error;
+    }
+
+    // Update password
+    user.password = password;
+    this.storage.users.set(user.username, user);
+
+    // Remove used token
+    this.storage.resetTokens.delete(token);
+
+    return { 
+      message: 'Password reset successfully',
+      success: true
+    };
   }
 
   /**

@@ -3,10 +3,10 @@ import { A } from '@solidjs/router';
 import { API } from '../api/index.js';
 
 export const ForgotPassword = () => {
-  const [email, setEmail] = createSignal('');
+  const [username, setUsername] = createSignal('');
   const [isLoading, setIsLoading] = createSignal(false);
   const [message, setMessage] = createSignal('');
-  const [emailSent, setEmailSent] = createSignal(false);
+  const [requestSent, setRequestSent] = createSignal(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,10 +14,10 @@ export const ForgotPassword = () => {
     setMessage('');
 
     try {
-      const response = await API.user.forgotPassword(email());
+      const response = await API.user.forgotPassword(username());
       
-      setEmailSent(true);
-      setMessage(response.message || 'Password reset instructions have been sent to your email.');
+      setRequestSent(true);
+      setMessage(response.message || 'Password reset instructions have been sent to your registered email address.');
     } catch (error) {
       setMessage('Error: ' + error.message);
     } finally {
@@ -31,9 +31,9 @@ export const ForgotPassword = () => {
         <div class="auth-card">
           <h1>Reset Password</h1>
           
-          {!emailSent() ? (
+          {!requestSent() ? (
             <>
-              <p>Enter your email address and we'll send you instructions to reset your password.</p>
+              <p>Enter your username and we'll send password reset instructions to your registered email address.</p>
               
               {message() && message().includes('Error') && (
                 <div class="error-message">
@@ -43,15 +43,15 @@ export const ForgotPassword = () => {
               
               <form onSubmit={handleSubmit} class="auth-form">
                 <div class="form-group">
-                  <label for="email">Email Address</label>
+                  <label for="username">Username</label>
                   <input
-                    type="email"
-                    id="email"
-                    value={email()}
-                    onInput={(e) => setEmail(e.target.value)}
+                    type="text"
+                    id="username"
+                    value={username()}
+                    onInput={(e) => setUsername(e.target.value)}
                     required
                     disabled={isLoading()}
-                    placeholder="Enter your email address"
+                    placeholder="Enter your username"
                   />
                 </div>
                 
@@ -68,17 +68,17 @@ export const ForgotPassword = () => {
             <>
               <div class="success-message">
                 <div class="success-icon">✓</div>
-                <h2>Check Your Email</h2>
+                <h2>Reset Request Sent</h2>
                 <p>{message()}</p>
-                <p>If you don't receive an email within a few minutes, please check your spam folder.</p>
+                <p>If you don't receive an email within a few minutes, please check your spam folder or contact support.</p>
               </div>
               
               <button 
                 type="button" 
                 class="btn btn-secondary btn-full"
                 onClick={() => {
-                  setEmailSent(false);
-                  setEmail('');
+                  setRequestSent(false);
+                  setUsername('');
                   setMessage('');
                 }}
               >

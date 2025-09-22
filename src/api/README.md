@@ -88,8 +88,10 @@ export const API_CONFIG = {
 - `refreshToken(refreshToken)` - Get new access token
 
 #### Password Management
-- `forgotPassword(email)` - Request password reset
-- `resetPassword({token, password})` - Reset password
+- `forgotPassword(username)` - Request password reset
+- `validateResetToken(token)` - Validate password reset token
+- `completePasswordReset({token, password, password_confirm})` - Complete password reset
+- `resetPassword({token, password})` - Reset password (legacy)
 - `changePassword({current_password, new_password, confirm_password})` - Change password
 
 #### Profile Management

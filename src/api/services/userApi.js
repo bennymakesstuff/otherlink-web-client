@@ -57,16 +57,34 @@ export class UserApi extends BaseApi {
   }
 
   /**
-   * Request password reset email
-   * @param {string} email - User email address
+   * Request password reset
+   * @param {string} username - User's username
    * @returns {Promise<Object>} - Reset request response
    */
-  async forgotPassword(email) {
-    return this.post('/password/forgot', { email });
+  async forgotPassword(username) {
+    return this.post('/password/forgot', { username });
   }
 
   /**
-   * Reset password using token from email
+   * Validate password reset token
+   * @param {string} token - Reset token
+   * @returns {Promise<Object>} - Validation response
+   */
+  async validateResetToken(token) {
+    return this.post('/password/reset/validate', { token });
+  }
+
+  /**
+   * Complete password reset using validated token
+   * @param {Object} resetData - {token, password, password_confirm}
+   * @returns {Promise<Object>} - Reset response
+   */
+  async completePasswordReset(resetData) {
+    return this.post('/password/reset/complete', resetData);
+  }
+
+  /**
+   * Reset password using token from email (legacy method)
    * @param {Object} resetData - {token, password}
    * @returns {Promise<Object>} - Reset response
    */
