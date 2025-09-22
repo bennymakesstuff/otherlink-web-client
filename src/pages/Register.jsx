@@ -39,16 +39,16 @@ export const Register = () => {
     
     try {
       // Make API call to register using new API structure
-      await API.user.register({
+      const response = await API.user.register({
         email: data.email,
         password: data.password,
         firstName: data.firstName,
         lastName: data.lastName
       });
 
-      // Navigate to login page on successful registration
-      navigate('/login', { 
-        state: { message: 'Registration successful! Please log in.' }
+      // Navigate to verification sent page on successful registration
+      navigate('/verification-sent', { 
+        state: { email: data.email }
       });
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again.');

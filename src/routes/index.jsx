@@ -15,9 +15,13 @@ const ForgotPassword = lazy(() => import('../pages/ForgotPassword').then(m => ({
 const ResetPassword = lazy(() => import('../pages/ResetPassword').then(m => ({ default: m.ResetPassword })));
 const ResetComplete = lazy(() => import('../pages/ResetComplete').then(m => ({ default: m.ResetComplete })));
 const ResetExpired = lazy(() => import('../pages/ResetExpired').then(m => ({ default: m.ResetExpired })));
+const VerificationSent = lazy(() => import('../pages/VerificationSent').then(m => ({ default: m.VerificationSent })));
+const VerifyEmail = lazy(() => import('../pages/VerifyEmail').then(m => ({ default: m.VerifyEmail })));
 const Dashboard = lazy(() => import('../pages/Dashboard').then(m => ({ default: m.Dashboard })));
 const Profile = lazy(() => import('../pages/Profile').then(m => ({ default: m.Profile })));
 const Settings = lazy(() => import('../pages/Settings').then(m => ({ default: m.Settings })));
+const LoginTest = lazy(() => import('../components/LoginTest').then(m => ({ default: m.LoginTest })));
+const AuthTest = lazy(() => import('../pages/AuthTest').then(m => ({ default: m.AuthTest })));
 
 // Layout wrapper component
 const Layout = (props) => (
@@ -44,6 +48,18 @@ export const AppRouter = () => {
       <Route path="/" component={() => (
         <Layout>
           <Home />
+        </Layout>
+      )} />
+      
+      <Route path="/test-login" component={() => (
+        <Layout>
+          <LoginTest />
+        </Layout>
+      )} />
+      
+      <Route path="/auth-test" component={() => (
+        <Layout>
+          <AuthTest />
         </Layout>
       )} />
       
@@ -89,6 +105,18 @@ export const AppRouter = () => {
       <Route path="/reset-expired" component={() => (
         <Layout>
           <ResetExpired />
+        </Layout>
+      )} />
+      
+      <Route path="/verification-sent" component={() => (
+        <Layout>
+          <VerificationSent />
+        </Layout>
+      )} />
+      
+      <Route path="/verify-email" component={() => (
+        <Layout>
+          <VerifyEmail />
         </Layout>
       )} />
       

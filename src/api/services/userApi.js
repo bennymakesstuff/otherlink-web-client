@@ -93,6 +93,15 @@ export class UserApi extends BaseApi {
   }
 
   /**
+   * Verify email address with token
+   * @param {string} token - Email verification token
+   * @returns {Promise<Object>} - Verification response
+   */
+  async verifyEmail(token) {
+    return this.post('/email/verify', { token });
+  }
+
+  /**
    * Get current user profile
    * @returns {Promise<Object>} - User profile data
    */

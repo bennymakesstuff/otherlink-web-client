@@ -11,6 +11,7 @@ export class MockUserApi {
       users: new Map(),
       tokens: new Map(),
       resetTokens: new Map(),
+      verificationTokens: new Map(),
     };
 
     // Create a default test user
@@ -184,10 +185,13 @@ export class MockUserApi {
     const newUser = {
       id: Date.now(),
       username: userData.username,
+      email: userData.email,
       first_name: userData.firstName,
       last_name: userData.lastName,
       full_name: `${userData.firstName || ''} ${userData.lastName || ''}`.trim(),
       password: userData.password,
+      email_verified: false,
+      email_verified_at: null,
       roles: [
         {
           id: 1,
@@ -207,11 +211,27 @@ export class MockUserApi {
       lastLogin: null,
     };
 
+    // Create verification token for new user
+    const verificationToken = `verify-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    this.storage.verificationTokens.set(verificationToken, {
+      userId: newUser.id,
+      expires: Date.now() + 86400000 // 24 hours
+    });
+
     this.storage.users.set(userData.username, newUser);
 
     return { 
-      message: 'User registered successfully',
-      userId: newUser.id 
+      message: 'Registration successful. Please check your email to verify your account.',
+      user: {
+        id: newUser.id,
+        username: newUser.username,
+        email: newUser.email,
+        first_name: newUser.first_name,
+        last_name: newUser.last_name,
+        full_name: newUser.full_name,
+        email_verified: false
+      },
+      verification_token: verificationToken // In real app, this would be sent via email
     };
   }
 
@@ -400,6 +420,52 @@ export class MockUserApi {
     return { 
       message: 'Password reset successfully',
       success: true
+    };
+  }
+
+  /**
+   * Mock verify email
+   */
+  async verifyEmail(token) {
+    await this.simulateApiCall();
+
+    // Check if token exists in our mock verification tokens
+    const verificationInfo = this.storage.verificationTokens?.get(token);
+
+    if (!verificationInfo || verificationInfo.expires < Date.now()) {
+      const error = new Error('Email verification token is invalid or expired');
+      error.status = 400;
+      throw error;
+    }
+
+    const user = Array.from(this.storage.users.values())
+      .find(u => u.id === verificationInfo.userId);
+
+    if (!user) {
+      const error = new Error('User not found');
+      error.status = 404;
+      throw error;
+    }
+
+    // Mark user as verified
+    user.email_verified = true;
+    user.email_verified_at = new Date().toISOString();
+    this.storage.users.set(user.username, user);
+
+    // Remove used verification token
+    this.storage.verificationTokens.delete(token);
+
+    return { 
+      message: 'Email verified successfully',
+      success: true,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email_verified: true
+      }
     };
   }
 

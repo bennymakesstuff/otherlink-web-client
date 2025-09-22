@@ -447,6 +447,55 @@ body {
   border-left: 3px solid var(--color-primary);
 }
 
+/* Email verification page styles */
+.verification-instructions {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.verification-instructions h3 {
+  margin: 0 0 1rem 0;
+  color: var(--color-text-primary);
+  font-size: 1.1rem;
+}
+
+.verification-instructions ol {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.verification-instructions li {
+  margin-bottom: 0.5rem;
+  color: var(--color-text-secondary);
+}
+
+.verification-help {
+  background: #fff5d6;
+  border: 1px solid #fbbf24;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.verification-help h4 {
+  margin: 0 0 1rem 0;
+  color: #92400e;
+  font-size: 1rem;
+}
+
+.verification-help ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.verification-help li {
+  margin-bottom: 0.5rem;
+  color: #92400e;
+}
+
 /* Password reset page styles */
 .form-help {
   font-size: 0.75rem;

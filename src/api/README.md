@@ -92,6 +92,11 @@ export const API_CONFIG = {
 - `validateResetToken(token)` - Validate password reset token
 - `completePasswordReset({token, password, password_confirm})` - Complete password reset
 - `resetPassword({token, password})` - Reset password (legacy)
+
+#### Email Verification
+- `verifyEmail(token)` - Verify email address with token
+
+#### Password Management (continued)
 - `changePassword({current_password, new_password, confirm_password})` - Change password
 
 #### Profile Management
