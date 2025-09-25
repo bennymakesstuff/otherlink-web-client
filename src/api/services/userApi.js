@@ -245,4 +245,72 @@ export class UserApi extends BaseApi {
       refresh_token: currentRefreshToken
     });
   }
+
+  // OAuth Authentication
+  
+  /**
+   * Authenticate user with Google ID token
+   * @param {string} idToken - Google ID token
+   * @returns {Promise<Object>} - Authentication response with tokens
+   */
+  async googleAuth(idToken) {
+    return this.post('/auth/google', { id_token: idToken });
+  }
+
+  /**
+   * Authenticate user with Apple ID token
+   * @param {string} idToken - Apple ID token
+   * @param {string} authorizationCode - Apple authorization code (optional)
+   * @returns {Promise<Object>} - Authentication response with tokens
+   */
+  async appleAuth(idToken, authorizationCode = null) {
+    const payload = { id_token: idToken };
+    if (authorizationCode) {
+      payload.authorization_code = authorizationCode;
+    }
+    return this.post('/auth/apple', payload);
+  }
+
+  /**
+   * Link OAuth account to existing user
+   * @param {Object} linkData - {provider, id_token, existing_password}
+   * @returns {Promise<Object>} - Link response
+   */
+  async linkOAuthAccount(linkData) {
+    return this.post('/auth/oauth/link', linkData);
+  }
+
+  /**
+   * Unlink OAuth account from user
+   * @param {string} provider - OAuth provider (google, apple)
+   * @returns {Promise<Object>} - Unlink response
+   */
+  async unlinkOAuthAccount(provider) {
+    return this.delete(`/auth/oauth/unlink/${provider}`);
+  }
+
+  /**
+   * Get list of connected OAuth providers for current user
+   * @returns {Promise<Object>} - List of connected providers
+   */
+  async getOAuthProviders() {
+    return this.get('/auth/oauth/providers');
+  }
+
+  /**
+   * Get user's OAuth account connections
+   * @returns {Promise<Object>} - List of OAuth accounts
+   */
+  async getOAuthAccounts() {
+    return this.get('/user/oauth-accounts');
+  }
+
+  /**
+   * Remove OAuth connection for specific provider
+   * @param {string} provider - OAuth provider to remove
+   * @returns {Promise<Object>} - Removal response
+   */
+  async removeOAuthConnection(provider) {
+    return this.delete(`/user/oauth-accounts/${provider}`);
+  }
 }

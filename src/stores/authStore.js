@@ -178,6 +178,117 @@ export const authStore = {
     }
   },
 
+  // OAuth Authentication methods
+  async googleLogin(idToken) {
+    setIsLoading(true);
+    try {
+      const response = await API.user.googleAuth(idToken);
+      
+      // Handle response format similar to regular login
+      const responseData = response.data || response;
+      
+      // Check for account linking requirement
+      if (responseData.account_linking_required) {
+        return { 
+          requiresLinking: true, 
+          existingEmail: responseData.existing_email,
+          pendingOAuthData: responseData.pending_oauth_data 
+        };
+      }
+      
+      // Handle successful OAuth authentication
+      return this.processAuthResponse(response);
+    } catch (error) {
+      console.error('Google login error:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  },
+
+  async appleLogin(idToken, authorizationCode = null) {
+    setIsLoading(true);
+    try {
+      const response = await API.user.appleAuth(idToken, authorizationCode);
+      
+      // Handle response format similar to regular login
+      const responseData = response.data || response;
+      
+      // Check for account linking requirement
+      if (responseData.account_linking_required) {
+        return { 
+          requiresLinking: true, 
+          existingEmail: responseData.existing_email,
+          pendingOAuthData: responseData.pending_oauth_data 
+        };
+      }
+      
+      // Handle successful OAuth authentication
+      return this.processAuthResponse(response);
+    } catch (error) {
+      console.error('Apple login error:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  },
+
+  async linkOAuthAccount(linkData) {
+    setIsLoading(true);
+    try {
+      const response = await API.user.linkOAuthAccount(linkData);
+      return this.processAuthResponse(response);
+    } catch (error) {
+      console.error('OAuth account linking error:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  },
+
+  // Helper method to process auth responses consistently
+  processAuthResponse(response) {
+    // Check for 2FA requirement BEFORE trying to extract tokens
+    const responseData = response.data || response;
+    if (responseData.two_factor_required) {
+      console.log('2FA required - returning response without setting tokens');
+      return response; // Return early for 2FA handling
+    }
+    
+    // Handle response format: Symfony server format (only when 2FA not required)
+    let accessToken, refreshToken, user;
+    
+    if (response.data && response.data.tokens) {
+      // Server responds with { data: { tokens: { access_token: '...', refresh_token: '...' }, user: {...} } }
+      accessToken = response.data.tokens.access_token;
+      refreshToken = response.data.tokens.refresh_token;
+      user = response.data.user;
+    } else if (response.tokens) {
+      // Alternative format: { tokens: { access_token: '...', refresh_token: '...' }, user: {...} }
+      accessToken = response.tokens.access_token || response.tokens.access;
+      refreshToken = response.tokens.refresh_token || response.tokens.refresh;
+      user = response.user;
+    } else {
+      // Fallback to direct properties (mock API format)
+      accessToken = response.accessToken;
+      refreshToken = response.refreshToken;
+      user = response.user;
+    }
+    
+    if (!accessToken || !refreshToken) {
+      throw new Error('Invalid response: missing tokens');
+    }
+    
+    setAccessToken(accessToken);
+    setRefreshToken(refreshToken);
+    setUser(user);
+    
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+    
+    return response;
+  },
+
   // Set authenticated user (used after 2FA verification)
   async setAuthenticatedUser(userData, accessTokenValue, refreshTokenValue) {
     setAccessToken(accessTokenValue);

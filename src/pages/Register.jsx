@@ -1,6 +1,10 @@
 import { createSignal } from 'solid-js';
 import { A, useNavigate } from '@solidjs/router';
 import { API } from '../api/index.js';
+import { GoogleSignInButton } from '../components/GoogleSignInButton';
+import { AppleSignInButton } from '../components/AppleSignInButton';
+import { AccountLinkingModal } from '../components/AccountLinkingModal';
+import { isOAuthConfigured, isAnyOAuthConfigured } from '../config/oauth';
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -13,6 +17,7 @@ export const Register = () => {
   });
   const [error, setError] = createSignal('');
   const [isLoading, setIsLoading] = createSignal(false);
+  const [linkingData, setLinkingData] = createSignal(null);
 
   const updateFormData = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -57,6 +62,46 @@ export const Register = () => {
     }
   };
 
+  // OAuth Handlers
+  const handleOAuthSuccess = () => {
+    setError('');
+    setTimeout(() => {
+      navigate('/dashboard');
+    }, 100);
+  };
+
+  const handleOAuthError = (err) => {
+    console.error('OAuth error:', err);
+    setError(err.message || 'OAuth authentication failed');
+  };
+
+  const handleAccountLinkingRequired = (data) => {
+    setError('');
+    setLinkingData(data);
+  };
+
+  const handleOAuthTwoFactorRequired = (twoFactorData) => {
+    setError('');
+    navigate('/2fa-verify', {
+      state: { twoFactorData }
+    });
+  };
+
+  const handleLinkingSuccess = () => {
+    setLinkingData(null);
+    handleOAuthSuccess();
+  };
+
+  const handleLinkingCancel = () => {
+    setLinkingData(null);
+    setError('');
+  };
+
+  const handleLinkingTwoFactor = (twoFactorData) => {
+    setLinkingData(null);
+    handleOAuthTwoFactorRequired(twoFactorData);
+  };
+
   return (
     <div class="auth-page">
       <div class="auth-container">
@@ -68,6 +113,36 @@ export const Register = () => {
             <div class="error-message">
               {error()}
             </div>
+          )}
+
+          {/* OAuth Sign Up Options - only show if any provider is configured */}
+          {isAnyOAuthConfigured() && (
+            <>
+              <div class="oauth-buttons">
+                {isOAuthConfigured('google') && (
+                  <GoogleSignInButton
+                    context="signup"
+                    text="signup_with"
+                    onSuccess={handleOAuthSuccess}
+                    onError={handleOAuthError}
+                    onAccountLinkingRequired={handleAccountLinkingRequired}
+                    onTwoFactorRequired={handleOAuthTwoFactorRequired}
+                  />
+                )}
+                {isOAuthConfigured('apple') && (
+                  <AppleSignInButton
+                    onSuccess={handleOAuthSuccess}
+                    onError={handleOAuthError}
+                    onAccountLinkingRequired={handleAccountLinkingRequired}
+                    onTwoFactorRequired={handleOAuthTwoFactorRequired}
+                  />
+                )}
+              </div>
+
+              <div class="oauth-divider">
+                <span>or sign up with email</span>
+              </div>
+            </>
           )}
           
           <form onSubmit={handleSubmit} class="auth-form">
@@ -149,6 +224,16 @@ export const Register = () => {
           </div>
         </div>
       </div>
+
+      {/* Account Linking Modal */}
+      {linkingData() && (
+        <AccountLinkingModal
+          linkingData={linkingData()}
+          onSuccess={handleLinkingSuccess}
+          onCancel={handleLinkingCancel}
+          onTwoFactorRequired={handleLinkingTwoFactor}
+        />
+      )}
     </div>
   );
 };
