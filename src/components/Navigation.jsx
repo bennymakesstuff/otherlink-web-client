@@ -1,6 +1,7 @@
 import { A, useLocation } from '@solidjs/router';
 import { Show } from 'solid-js';
 import { authStore } from '../stores/authStore';
+import { UserAvatar } from './UserAvatar';
 
 export const Navigation = () => {
   const location = useLocation();
@@ -62,9 +63,7 @@ export const Navigation = () => {
               
               <div class="user-menu">
                 <div class="user-info">
-                  <div class="user-avatar">
-                    {authStore.user?.first_name?.[0]}{authStore.user?.last_name?.[0]}
-                  </div>
+                  <UserAvatar size={32} />
                   <span class="user-name">
                     {authStore.user?.full_name || `${authStore.user?.first_name || ''} ${authStore.user?.last_name || ''}`.trim()}
                   </span>

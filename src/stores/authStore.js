@@ -312,4 +312,82 @@ export const authStore = {
     
     return false;
   },
+
+  // Avatar management methods
+  async updateAvatar(avatarResponse) {
+    const currentUser = user();
+    if (currentUser) {
+      // Handle server response format
+      const responseData = avatarResponse.data || avatarResponse;
+      
+      // Extract avatar URL and file ID from response
+      const avatarUrl = responseData.upload_url || 
+                       responseData.avatar_info?.avatar_url || 
+                       responseData.avatar_url;
+      
+      const avatarFileId = responseData.file?.id || 
+                          responseData.avatar_info?.avatar_file_id || 
+                          responseData.avatar_file_id;
+      
+      const avatarInfo = responseData.avatar_info || {};
+      
+      
+      const updatedUser = {
+        ...currentUser,
+        avatar: avatarInfo,
+        has_avatar: !!avatarUrl,
+        avatar_url: avatarUrl,
+        avatar_file_id: avatarFileId
+      };
+      
+      setUser(updatedUser);
+    }
+  },
+
+  async removeAvatar() {
+    setIsLoading(true);
+    try {
+      await API.user.removeAvatar();
+      
+      // Update user object to remove avatar data
+      const currentUser = user();
+      if (currentUser) {
+        const updatedUser = {
+          ...currentUser,
+          avatar: null,
+          has_avatar: false,
+          avatar_url: null,
+          avatar_file_id: null
+        };
+        setUser(updatedUser);
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Remove avatar error:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  },
+
+  async refreshUserProfile() {
+    setIsLoading(true);
+    try {
+      const response = await API.user.getUserProfile();
+      const userData = response.data || response;
+      
+      if (userData) {
+        setUser(userData);
+        return userData;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Refresh user profile error:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  },
 };

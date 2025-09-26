@@ -1,4 +1,5 @@
 import { BaseApi } from '../baseApi.js';
+import { isRealMode, API_CONFIG } from '../config.js';
 
 /**
  * Real User API Service
@@ -312,5 +313,254 @@ export class UserApi extends BaseApi {
    */
   async removeOAuthConnection(provider) {
     return this.delete(`/user/oauth-accounts/${provider}`);
+  }
+
+  // Avatar Management
+  
+  /**
+   * Upload user avatar image
+   * @param {File} avatarFile - Image file to upload
+   * @returns {Promise<Object>} - Upload response with avatar data
+   */
+  async uploadAvatar(avatarFile) {
+    if (!isRealMode()) {
+      throw new Error('BaseApi.uploadAvatar should only be used in real API mode');
+    }
+
+    const formData = new FormData();
+    formData.append('avatar', avatarFile);
+    
+    // Try adding category field (common requirement for file upload endpoints)
+    formData.append('category', 'avatar');
+    formData.append('is_public', true);
+    formData.append('description', 'image');
+    formData.append('alt_text', 'image');
+    formData.append('check_duplicates', false);
+
+    const url = `${this.baseUrl}/files/upload/avatar`;
+    
+    // Use fetch directly to avoid automatic Content-Type setting
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.REAL_API.TIMEOUT);
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          // Only include auth headers, NO Content-Type for FormData
+          ...this.getAuthHeaders(),
+        },
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        let errorData = {};
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          // Response might not be JSON
+        }
+        
+        const error = new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+        error.status = response.status;
+        error.statusText = response.statusText;
+        error.data = errorData;
+        throw error;
+      }
+
+      // Handle empty responses
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        return await response.json();
+      } else {
+        return null;
+      }
+    } catch (error) {
+      clearTimeout(timeoutId);
+      
+      if (error.name === 'AbortError') {
+        throw new Error('Request timeout');
+      }
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Upload user avatar with custom parameters (for testing)
+   * @param {File} avatarFile - Image file to upload
+   * @param {Object} options - Upload options
+   * @returns {Promise<Object>} - Upload response with avatar data
+   */
+  async uploadAvatarTest(avatarFile, options = {}) {
+    if (!isRealMode()) {
+      throw new Error('BaseApi.uploadAvatarTest should only be used in real API mode');
+    }
+
+    const {
+      fieldName = 'avatar',
+      category = null,
+      type = null,
+      fileType = null,
+      includeMetadata = false
+    } = options;
+
+    const formData = new FormData();
+    formData.append(fieldName, avatarFile);
+    
+    // Conditionally add category fields
+    if (category) formData.append('category', category);
+    if (type) formData.append('type', type);
+    if (fileType) formData.append('file_type', fileType);
+    
+    // Add metadata if requested
+    if (includeMetadata) {
+      formData.append('filename', avatarFile.name);
+      formData.append('mime_type', avatarFile.type);
+      formData.append('file_size', avatarFile.size.toString());
+    }
+
+    // Debug logging
+    console.log(`FormData contents (testing with options):`, options);
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
+    const url = `${this.baseUrl}/files/upload/avatar`;
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.REAL_API.TIMEOUT);
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          ...this.getAuthHeaders(),
+        },
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        let errorData = {};
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          // Response might not be JSON
+        }
+        
+        const error = new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+        error.status = response.status;
+        error.statusText = response.statusText;
+        error.data = errorData;
+        throw error;
+      }
+
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        return await response.json();
+      } else {
+        return null;
+      }
+    } catch (error) {
+      clearTimeout(timeoutId);
+      
+      if (error.name === 'AbortError') {
+        throw new Error('Request timeout');
+      }
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Upload user avatar with alternative field name (for testing)
+   * @param {File} avatarFile - Image file to upload
+   * @param {string} fieldName - Field name to use (default: 'avatar')
+   * @returns {Promise<Object>} - Upload response with avatar data
+   */
+  async uploadAvatarWithFieldName(avatarFile, fieldName = 'avatar') {
+    if (!isRealMode()) {
+      throw new Error('BaseApi.uploadAvatarWithFieldName should only be used in real API mode');
+    }
+
+    const formData = new FormData();
+    formData.append(fieldName, avatarFile);
+
+    // Debug logging
+    console.log(`FormData contents (field: ${fieldName}):`);
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
+    const url = `${this.baseUrl}/files/upload/avatar`;
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.REAL_API.TIMEOUT);
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          ...this.getAuthHeaders(),
+        },
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        let errorData = {};
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          // Response might not be JSON
+        }
+        
+        const error = new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+        error.status = response.status;
+        error.statusText = response.statusText;
+        error.data = errorData;
+        throw error;
+      }
+
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        return await response.json();
+      } else {
+        return null;
+      }
+    } catch (error) {
+      clearTimeout(timeoutId);
+      
+      if (error.name === 'AbortError') {
+        throw new Error('Request timeout');
+      }
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Remove user avatar
+   * @param {boolean} deleteFile - Whether to delete the file from storage
+   * @returns {Promise<Object>} - Removal response
+   */
+  async removeAvatar(deleteFile = true) {
+    return this.delete(`/files/avatar?delete_file=${deleteFile}`);
+  }
+
+  /**
+   * Get user profile with avatar information
+   * @returns {Promise<Object>} - User profile including avatar data
+   */
+  async getUserProfile() {
+    return this.get('/user/profile');
   }
 }

@@ -1,6 +1,7 @@
 import { createSignal } from 'solid-js';
 import { authStore } from '../stores/authStore';
 import { API } from '../api/index.js';
+import { AvatarUpload } from '../components/AvatarUpload';
 
 export const Profile = () => {
   const user = () => authStore.user;
@@ -45,6 +46,32 @@ export const Profile = () => {
     setMessage('');
   };
 
+  // Avatar management handlers
+  const handleAvatarUploadSuccess = (avatarResponse) => {
+    // Update the user's avatar in the auth store
+    authStore.updateAvatar(avatarResponse);
+    
+    // Show success message with file info if available
+    const responseData = avatarResponse.data || avatarResponse;
+    const fileSize = responseData.file?.formatted_file_size || 
+                    responseData.avatar_info?.formatted_file_size;
+    
+    const successMessage = fileSize 
+      ? `Avatar uploaded successfully! (${fileSize})`
+      : 'Avatar uploaded successfully!';
+    
+    setMessage(successMessage);
+  };
+
+  const handleAvatarRemove = async () => {
+    try {
+      await authStore.removeAvatar();
+      setMessage('Avatar removed successfully!');
+    } catch (error) {
+      setMessage('Error removing avatar: ' + error.message);
+    }
+  };
+
   return (
     <div class="profile-page">
       <div class="profile-container">
@@ -60,10 +87,17 @@ export const Profile = () => {
         )}
 
         <div class="profile-card">
-          <div class="profile-avatar">
-            <div class="avatar-placeholder">
-              {user()?.first_name?.[0]}{user()?.last_name?.[0]}
-            </div>
+          <div class="profile-avatar-section">
+            <h3>Profile Avatar</h3>
+            <AvatarUpload
+              currentAvatar={user()?.avatar_url ? {
+                avatar_url: user().avatar_url,
+                formatted_file_size: user().avatar?.formatted_file_size || 'Unknown size',
+                file_size: user().avatar?.file_size
+              } : null}
+              onUploadSuccess={handleAvatarUploadSuccess}
+              onRemove={handleAvatarRemove}
+            />
           </div>
 
           <form onSubmit={handleSubmit} class="profile-form">
