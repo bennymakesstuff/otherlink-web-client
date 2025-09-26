@@ -552,7 +552,7 @@ export class UserApi extends BaseApi {
    * @param {boolean} deleteFile - Whether to delete the file from storage
    * @returns {Promise<Object>} - Removal response
    */
-  async removeAvatar(deleteFile = true) {
+  async removeAvatar(deleteFile = false) {
     return this.delete(`/files/avatar?delete_file=${deleteFile}`);
   }
 
