@@ -22,6 +22,9 @@ export const Settings = () => {
   const [twoFactorMessage, setTwoFactorMessage] = createSignal('');
   const [twoFactorError, setTwoFactorError] = createSignal('');
   const [enabledAt, setEnabledAt] = createSignal('');
+  const [canEnable2FA, setCanEnable2FA] = createSignal(true);
+  const [isOAuthUser, setIsOAuthUser] = createSignal(false);
+  const [oauthProvider, setOAuthProvider] = createSignal(null);
   
   const [passwordData, setPasswordData] = createSignal({
     current_password: '',
@@ -245,6 +248,9 @@ export const Settings = () => {
       const response = await API.user.get2FAStatus();
       setTwoFactorEnabled(response.two_factor_enabled);
       setEnabledAt(response.enabled_at);
+      setCanEnable2FA(response.can_enable_2fa !== false); // Default to true for backward compatibility
+      setIsOAuthUser(response.is_oauth_user || false);
+      setOAuthProvider(response.oauth_provider);
     } catch (error) {
       console.error('Failed to load 2FA status:', error);
       setTwoFactorError('Failed to load 2FA status');
@@ -320,80 +326,105 @@ export const Settings = () => {
         <div class="settings-section">
           <h2>Security</h2>
           
-          <div class="settings-card">
-            <h3>Two-Factor Authentication</h3>
-            <p>Add an extra layer of security to your account by requiring a verification code from your email.</p>
-            
-            <Show when={twoFactorLoading()}>
-              <div class="loading-sessions">
-                <div class="loading-spinner"></div>
-                <p>Loading 2FA status...</p>
-              </div>
-            </Show>
-
-            <Show when={!twoFactorLoading()}>
-              {twoFactorMessage() && (
-                <div class="success-message">
-                  {twoFactorMessage()}
-                </div>
-              )}
-
-              {twoFactorError() && (
-                <div class="error-message">
-                  {twoFactorError()}
-                </div>
-              )}
-
-              <div class="two-factor-status">
-                <div class="status-indicator">
-                  <span class={`status-dot ${twoFactorEnabled() ? 'enabled' : 'disabled'}`}></span>
-                  <span class="status-text">
-                    Two-factor authentication is <strong>{twoFactorEnabled() ? 'enabled' : 'disabled'}</strong>
-                  </span>
-                </div>
+          <Show when={canEnable2FA() && !isAnyOAuthConfigured()}>
+            <div class="settings-card">
+              <h3>Two-Factor Authentication</h3>
+              
+                <p>Your account is secured by {oauthProvider() === 'google' ? 'Google' : oauthProvider() === 'apple' ? 'Apple' : 'your OAuth provider'}. Two-factor authentication is managed by your provider and cannot be modified here.</p>
                 
-                {twoFactorEnabled() && enabledAt() && (
-                  <p class="enabled-date">
-                    Enabled on {formatDate(enabledAt())}
-                  </p>
-                )}
-              </div>
+                <Show when={!twoFactorLoading()}>
+                  <div class="oauth-2fa-notice">
+                    <div class="info-box">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                      </svg>
+                      <div>
+                        <strong>OAuth Account Security</strong>
+                        <p>Your account is authenticated through {oauthProvider() === 'google' ? 'Google' : oauthProvider() === 'apple' ? 'Apple' : 'OAuth'}. Two-factor authentication and other security settings are managed by your OAuth provider. Please configure security settings in your {oauthProvider() === 'google' ? 'Google' : oauthProvider() === 'apple' ? 'Apple' : 'OAuth provider'} account.</p>
+                      </div>
+                    </div>
+                  </div>
+                </Show>
+              
 
-              <div class="two-factor-actions">
-                {twoFactorEnabled() ? (
-                  <button 
-                    type="button" 
-                    class="btn btn-danger"
-                    onClick={handleDisable2FA}
-                    disabled={twoFactorLoading()}
-                  >
-                    {twoFactorLoading() ? 'Disabling...' : 'Disable 2FA'}
-                  </button>
-                ) : (
-                  <button 
-                    type="button" 
-                    class="btn btn-primary"
-                    onClick={handleEnable2FA}
-                    disabled={twoFactorLoading()}
-                  >
-                    {twoFactorLoading() ? 'Enabling...' : 'Enable 2FA'}
-                  </button>
-                )}
-              </div>
+              <Show when={canEnable2FA()}>
+                <p>Add an extra layer of security to your account by requiring a verification code from your email.</p>
+                
+                <Show when={twoFactorLoading()}>
+                  <div class="loading-sessions">
+                    <div class="loading-spinner"></div>
+                    <p>Loading 2FA status...</p>
+                  </div>
+                </Show>
 
-              {!twoFactorEnabled() && (
-                <div class="two-factor-info">
-                  <h4>How it works:</h4>
-                  <ul>
-                    <li>When you sign in, we'll send a verification code to your email</li>
-                    <li>Enter the code to complete your sign-in</li>
-                    <li>Your account will be protected even if someone has your password</li>
-                  </ul>
-                </div>
-              )}
-            </Show>
-          </div>
+                <Show when={!twoFactorLoading()}>
+                  {twoFactorMessage() && (
+                    <div class="success-message">
+                      {twoFactorMessage()}
+                    </div>
+                  )}
 
+                  {twoFactorError() && (
+                    <div class="error-message">
+                      {twoFactorError()}
+                    </div>
+                  )}
+
+                  <div class="two-factor-status">
+                    <div class="status-indicator">
+                      <span class={`status-dot ${twoFactorEnabled() ? 'enabled' : 'disabled'}`}></span>
+                      <span class="status-text">
+                        Two-factor authentication is <strong>{twoFactorEnabled() ? 'enabled' : 'disabled'}</strong>
+                      </span>
+                    </div>
+                    
+                    {twoFactorEnabled() && enabledAt() && (
+                      <p class="enabled-date">
+                        Enabled on {formatDate(enabledAt())}
+                      </p>
+                    )}
+                  </div>
+
+                  <div class="two-factor-actions">
+                    {twoFactorEnabled() ? (
+                      <button 
+                        type="button" 
+                        class="btn btn-danger"
+                        onClick={handleDisable2FA}
+                        disabled={twoFactorLoading()}
+                      >
+                        {twoFactorLoading() ? 'Disabling...' : 'Disable 2FA'}
+                      </button>
+                    ) : (
+                      <button 
+                        type="button" 
+                        class="btn btn-primary"
+                        onClick={handleEnable2FA}
+                        disabled={twoFactorLoading()}
+                      >
+                        {twoFactorLoading() ? 'Enabling...' : 'Enable 2FA'}
+                      </button>
+                    )}
+                  </div>
+
+                  {!twoFactorEnabled() && (
+                    <div class="two-factor-info">
+                      <h4>How it works:</h4>
+                      <ul>
+                        <li>When you sign in, we'll send a verification code to your email</li>
+                        <li>Enter the code to complete your sign-in</li>
+                        <li>Your account will be protected even if someone has your password</li>
+                      </ul>
+                    </div>
+                  )}
+                </Show>
+              </Show>
+            </div>
+          </Show>
+
+          <Show when={!isAnyOAuthConfigured()}>
           <div class="settings-card">
             <h3>Change Password</h3>
             <p>Update your account password for better security.</p>
@@ -458,10 +489,7 @@ export const Settings = () => {
               </button>
             </form>
           </div>
-        </div>
-
-        <div class="settings-section">
-          <h2>Account</h2>
+          </Show>
           
           <div class="settings-card">
             <h3>Session Management</h3>
