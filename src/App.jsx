@@ -1,5 +1,5 @@
 import { onMount, createSignal, Show } from 'solid-js';
-import { AppRouter } from './Routes';
+import { AppRouter } from './routes';
 import { authStore } from './stores/authStore';
 
 function App() {
