@@ -1,5 +1,6 @@
 import { createSignal } from 'solid-js';
 import { API } from '../api/index.js';
+import { otherlinkStore } from './otherlinkStore.js';
 
 // Token management
 const [accessToken, setAccessToken] = createSignal(localStorage.getItem('accessToken'));
@@ -101,6 +102,9 @@ export const authStore = {
       
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
+      
+      // Clear otherlink data
+      otherlinkStore.clear();
       
       setIsLoading(false);
     }

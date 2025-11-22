@@ -47,7 +47,7 @@ export const Login = () => {
       
       // Small delay to ensure auth state is fully updated
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate('/admin/dashboard');
       }, 100);
       
     } catch (err) {
@@ -65,7 +65,7 @@ export const Login = () => {
   const handleOAuthSuccess = () => {
     setError('');
     setTimeout(() => {
-      navigate('/dashboard');
+      navigate('/admin/dashboard');
     }, 100);
   };
 

@@ -1,0 +1,14 @@
+.otherlink-form-modal {
+  max-width: 500px;
+  width: 100%;
+}
+
+.form-error-banner {
+  padding: 1rem;
+  background: var(--error-bg);
+  color: var(--error-color);
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+

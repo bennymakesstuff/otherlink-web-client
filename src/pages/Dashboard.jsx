@@ -1,11 +1,27 @@
-import { A } from '@solidjs/router';
+import { A, useNavigate } from '@solidjs/router';
+import { Show, onMount } from 'solid-js';
 import { authStore } from '../stores/authStore';
+import { otherlinkStore } from '../stores/otherlinkStore';
+import { OtherlinkSwitcher } from '../components/Otherlink/OtherlinkSwitcher';
+import { RecentLinks } from '../components/Dashboard/RecentLinks';
 
 export const Dashboard = () => {
+  const navigate = useNavigate();
   const user = () => authStore.user;
+  
+  onMount(() => {
+    // Load otherlinks on dashboard mount
+    if (otherlinkStore.otherlinks().length === 0) {
+      otherlinkStore.loadOtherlinks();
+    }
+  });
   
   const getUserRoles = () => {
     return user()?.roles?.map(role => role.name).join(', ') || 'No roles assigned';
+  };
+
+  const handleManageOtherlinks = () => {
+    navigate('/admin/otherlinks');
   };
 
   return (
@@ -14,30 +30,51 @@ export const Dashboard = () => {
         <h1>Dashboard</h1>
         <p>Welcome back, {user()?.first_name || 'User'}!</p>
       </header>
-      
+
+      <OtherlinkSwitcher onManageClick={handleManageOtherlinks} />
+
       <div class="dashboard-content">
-        <div class="dashboard-grid">
-          <div class="dashboard-card">
-            <h3>Profile Information</h3>
-            <div class="profile-info">
-              <p><strong>Name:</strong> {user()?.full_name || `${user()?.first_name || ''} ${user()?.last_name || ''}`.trim()}</p>
-              <p><strong>Username:</strong> {user()?.username}</p>
-              <p><strong>Roles:</strong> {getUserRoles()}</p>
+          <div class="dashboard-grid">
+            <div class="dashboard-card">
+              <h3>OtherLink Info</h3>
+              <div class="profile-info">
+                <p><strong>Name:</strong> {otherlinkStore.selectedOtherlink()?.name}</p>
+                <p><strong>Status:</strong> {otherlinkStore.selectedOtherlink()?.active ? 'Active' : 'Inactive'}</p>
+                <p><strong>Total Links:</strong> {otherlinkStore.selectedOtherlink()?.link_count || 0}</p>
+                <p><strong>Active Links:</strong> {otherlinkStore.selectedOtherlink()?.active_link_count || 0}</p>
+              </div>
+              <button class="btn btn-secondary" onClick={handleManageOtherlinks}>
+                Manage OtherLinks
+              </button>
             </div>
-            <A href="/profile" class="btn btn-secondary">Edit Profile</A>
-          </div>
-          
-          <div class="dashboard-card">
+            
+            <RecentLinks />
+            
+            <div class="dashboard-card">
             <h3>Quick Actions</h3>
             <div class="quick-actions">
-              <A href="/profile" class="action-link">
+              <A href="/admin/otherlinks" class="action-link">
+                <span class="action-icon">📄</span>
+                <div>
+                  <div class="action-title">OtherLinks</div>
+                  <div class="action-desc">Manage link pages</div>
+                </div>
+              </A>
+              <A href="/admin/links" class="action-link">
+                <span class="action-icon">🔗</span>
+                <div>
+                  <div class="action-title">Links</div>
+                  <div class="action-desc">Manage your links</div>
+                </div>
+              </A>
+              <A href="/admin/profile" class="action-link">
                 <span class="action-icon">👤</span>
                 <div>
                   <div class="action-title">Profile</div>
                   <div class="action-desc">Manage your account</div>
                 </div>
               </A>
-              <A href="/settings" class="action-link">
+              <A href="/admin/settings" class="action-link">
                 <span class="action-icon">⚙️</span>
                 <div>
                   <div class="action-title">Settings</div>

@@ -29,7 +29,7 @@ export const Home = () => {
             </>
           ) : (
             <>
-              <A href="/dashboard" class="btn btn-primary">Dashboard</A>
+              <A href="/admin/dashboard" class="btn btn-primary">Dashboard</A>
               <A href="/test-login" class="btn btn-outline">🧪 Test API</A>
             </>
           )}

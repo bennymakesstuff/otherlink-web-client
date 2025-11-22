@@ -1,3 +1,6 @@
+/* Import component styles */
+@import './styles/links.css';
+
 /* Reset and base styles */
 * {
   margin: 0;
@@ -61,14 +64,20 @@ body {
 
 .main-content {
   flex: 1;
+  padding-top: 64px; /* Account for fixed navigation */
 }
 
 /* Navigation */
 .navigation {
-  /* background: #17121c; */
-  background-color: transparent;
-  /* border-bottom: 1px solid #705585; */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border-bottom: 1px solid #e5e7eb;
   padding: 0 1rem;
+  z-index: 1000;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .unauthenticated-navigation {
@@ -116,7 +125,7 @@ body {
 .nav-brand a {
   font-size: 1.75rem;
   font-weight: 700;
-  color: white;
+  color: #1f2937;
   text-decoration: none;
 }
 
@@ -2140,4 +2149,24 @@ body {
   .avatar-upload {
     max-width: none;
   }
+}
+
+/* Dashboard Empty State */
+.dashboard-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--bg-secondary);
+  border: 2px dashed var(--border-color);
+  border-radius: 12px;
+  margin: 2rem 0;
+}
+
+.dashboard-empty h3 {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-empty p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
 }

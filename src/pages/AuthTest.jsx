@@ -39,7 +39,7 @@ export const AuthTest = () => {
 
       <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
         <A href="/login" class="btn btn-secondary">← Back to Login</A>
-        <A href="/dashboard" class="btn btn-primary">Try Dashboard →</A>
+        <A href="/admin/dashboard" class="btn btn-primary">Try Dashboard →</A>
         <button 
           onClick={() => window.location.reload()} 
           class="btn btn-outline"

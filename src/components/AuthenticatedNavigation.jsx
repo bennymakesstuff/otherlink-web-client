@@ -5,6 +5,7 @@ import { UserAvatar } from './UserAvatar';
 
 export const AuthenticatedNavigation = () => {
   const location = useLocation();
+  const isOnCreatePage = () => location.pathname === '/admin/create-otherlink';
   
   const handleLogout = async () => {
     if (confirm('Are you sure you want to log out?')) {
@@ -16,7 +17,7 @@ export const AuthenticatedNavigation = () => {
     <nav class="navigation">
       <div class="nav-container">
         <div class="nav-brand">
-          <A href={authStore.isAuthenticated ? "/dashboard" : "/"}>
+          <A href={authStore.isAuthenticated ? "/admin/dashboard" : "/"}>
             Otherlink.
           </A>
         </div>
@@ -42,24 +43,38 @@ export const AuthenticatedNavigation = () => {
             }
           >
             <div class="authenticated-nav">
-              <A 
-                href="/dashboard" 
-                class={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}
-              >
-                Dashboard
-              </A>
-              <A 
-                href="/profile" 
-                class={`nav-link ${location.pathname === '/profile' ? 'active' : ''}`}
-              >
-                Profile
-              </A>
-              <A 
-                href="/settings" 
-                class={`nav-link ${location.pathname === '/settings' ? 'active' : ''}`}
-              >
-                Settings
-              </A>
+              <Show when={!isOnCreatePage()}>
+                <A 
+                  href="/admin/dashboard" 
+                  class={`nav-link ${location.pathname === '/admin/dashboard' ? 'active' : ''}`}
+                >
+                  Dashboard
+                </A>
+                <A 
+                  href="/admin/otherlinks" 
+                  class={`nav-link ${location.pathname === '/admin/otherlinks' ? 'active' : ''}`}
+                >
+                  OtherLinks
+                </A>
+                <A 
+                  href="/admin/links" 
+                  class={`nav-link ${location.pathname === '/admin/links' ? 'active' : ''}`}
+                >
+                  Links
+                </A>
+                <A 
+                  href="/admin/profile" 
+                  class={`nav-link ${location.pathname === '/admin/profile' ? 'active' : ''}`}
+                >
+                  Profile
+                </A>
+                <A 
+                  href="/admin/settings" 
+                  class={`nav-link ${location.pathname === '/admin/settings' ? 'active' : ''}`}
+                >
+                  Settings
+                </A>
+              </Show>
               
               <div class="user-menu">
                 <div class="user-info">

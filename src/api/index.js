@@ -1,6 +1,8 @@
 import { isMockMode } from './config.js';
 import { UserApi } from './services/userApi.js';
 import { MockUserApi } from './services/userApi.mock.js';
+import { LinkApi } from './services/linkApi.js';
+import { OtherlinkApi } from './services/otherlinkApi.js';
 
 /**
  * Root API class that provides access to all API services
@@ -17,6 +19,12 @@ class ApiManager {
   initializeServices() {
     // User API service
     this.user = isMockMode() ? new MockUserApi() : new UserApi();
+    
+    // Link API service
+    this.link = new LinkApi();
+    
+    // Otherlink API service
+    this.otherlink = new OtherlinkApi();
     
     // Future services can be added here, e.g.:
     // this.admin = isMockMode() ? new MockAdminApi() : new AdminApi();
@@ -83,3 +91,5 @@ export { API_CONFIG, isMockMode, isRealMode } from './config.js';
 // Export individual service classes for advanced usage
 export { UserApi } from './services/userApi.js';
 export { MockUserApi } from './services/userApi.mock.js';
+export { LinkApi } from './services/linkApi.js';
+export { OtherlinkApi } from './services/otherlinkApi.js';

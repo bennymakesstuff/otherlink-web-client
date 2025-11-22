@@ -109,7 +109,7 @@ export const TwoFactorVerify = () => {
       await authStore.setAuthenticatedUser(user, accessToken, refreshToken);
 
       // Navigate to dashboard
-      navigate('/dashboard');
+      navigate('/admin/dashboard');
 
     } catch (err) {
       console.error('2FA verification error:', err);

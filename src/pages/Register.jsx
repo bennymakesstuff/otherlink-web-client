@@ -67,7 +67,7 @@ export const Register = () => {
   const handleOAuthSuccess = () => {
     setError('');
     setTimeout(() => {
-      navigate('/dashboard');
+      navigate('/admin/dashboard');
     }, 100);
   };
 

@@ -16,7 +16,7 @@ export const UnauthenticatedNavigation = () => {
     <nav class="navigation unauthenticated-navigation">
       <div class="nav-container">
         <div class="nav-brand">
-          <A href={authStore.isAuthenticated ? "/dashboard" : "/"}>
+          <A href={authStore.isAuthenticated ? "/admin/dashboard" : "/"}>
             Otherlink.
           </A>
         </div>
@@ -43,20 +43,20 @@ export const UnauthenticatedNavigation = () => {
           >
             <div class="authenticated-nav">
               <A 
-                href="/dashboard" 
-                class={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}
+                href="/admin/dashboard" 
+                class={`nav-link ${location.pathname === '/admin/dashboard' ? 'active' : ''}`}
               >
                 Dashboard
               </A>
               <A 
-                href="/profile" 
-                class={`nav-link ${location.pathname === '/profile' ? 'active' : ''}`}
+                href="/admin/profile" 
+                class={`nav-link ${location.pathname === '/admin/profile' ? 'active' : ''}`}
               >
                 Profile
               </A>
               <A 
-                href="/settings" 
-                class={`nav-link ${location.pathname === '/settings' ? 'active' : ''}`}
+                href="/admin/settings" 
+                class={`nav-link ${location.pathname === '/admin/settings' ? 'active' : ''}`}
               >
                 Settings
               </A>

@@ -154,7 +154,7 @@ export const GuestGuard = (props) => {
     >
       <Show 
         when={!authStore.isAuthenticated}
-        fallback={<Navigate href="/dashboard" />}
+        fallback={<Navigate href="/admin/dashboard" />}
       >
         {props.children}
       </Show>

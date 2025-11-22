@@ -3,6 +3,7 @@ import { lazy } from 'solid-js';
 
 // Guards
 import { AuthGuard, GuestGuard } from '../components/AuthGuard';
+import { OtherlinkGuard } from '../components/OtherlinkGuard';
 
 // Layout components
 import { UnauthenticatedNavigation } from '../components/UnauthenticatedNavigation.jsx';
@@ -20,6 +21,9 @@ const VerificationSent = lazy(() => import('../pages/VerificationSent').then(m =
 const VerifyEmail = lazy(() => import('../pages/VerifyEmail').then(m => ({ default: m.VerifyEmail })));
 const TwoFactorVerify = lazy(() => import('../pages/TwoFactorVerify').then(m => ({ default: m.TwoFactorVerify })));
 const Dashboard = lazy(() => import('../pages/Dashboard').then(m => ({ default: m.Dashboard })));
+const CreateOtherlink = lazy(() => import('../pages/CreateOtherlink').then(m => ({ default: m.CreateOtherlink })));
+const Otherlinks = lazy(() => import('../pages/Otherlinks').then(m => ({ default: m.Otherlinks })));
+const Links = lazy(() => import('../pages/Links').then(m => ({ default: m.Links })));
 const Profile = lazy(() => import('../pages/Profile').then(m => ({ default: m.Profile })));
 const Settings = lazy(() => import('../pages/Settings').then(m => ({ default: m.Settings })));
 const LoginTest = lazy(() => import('../components/LoginTest').then(m => ({ default: m.LoginTest })));
@@ -56,9 +60,9 @@ export const AppRouter = () => {
   return (
     <Router>
       <Route path="/" component={() => (
-        <Layout>
+        <LoggedOutLayout>
           <Home />
-        </Layout>
+        </LoggedOutLayout>
       )} />
       
       <Route path="/test-login" component={() => (
@@ -136,28 +140,65 @@ export const AppRouter = () => {
         </LoggedOutLayout>
       )} />
       
-      {/* Protected routes (authenticated users only) */}
-      <Route path="/dashboard" component={() => (
+      {/* Protected routes (authenticated users only) - All nested under /admin */}
+      
+      {/* Create Otherlink - No OtherlinkGuard (this is where they create their first one) */}
+      <Route path="/admin/create-otherlink" component={() => (
         <AuthGuard>
           <LoggedInLayout>
-            <Dashboard />
+            <CreateOtherlink />
           </LoggedInLayout>
         </AuthGuard>
       )} />
       
-      <Route path="/profile" component={() => (
+      {/* Routes that require at least one otherlink */}
+      <Route path="/admin/dashboard" component={() => (
         <AuthGuard>
-          <LoggedInLayout>
-            <Profile />
-          </LoggedInLayout>
+          <OtherlinkGuard>
+            <LoggedInLayout>
+              <Dashboard />
+            </LoggedInLayout>
+          </OtherlinkGuard>
         </AuthGuard>
       )} />
       
-      <Route path="/settings" component={() => (
+      <Route path="/admin/otherlinks" component={() => (
         <AuthGuard>
-          <LoggedInLayout>
-            <Settings />
-          </LoggedInLayout>
+          <OtherlinkGuard>
+            <LoggedInLayout>
+              <Otherlinks />
+            </LoggedInLayout>
+          </OtherlinkGuard>
+        </AuthGuard>
+      )} />
+      
+      <Route path="/admin/links" component={() => (
+        <AuthGuard>
+          <OtherlinkGuard>
+            <LoggedInLayout>
+              <Links />
+            </LoggedInLayout>
+          </OtherlinkGuard>
+        </AuthGuard>
+      )} />
+      
+      <Route path="/admin/profile" component={() => (
+        <AuthGuard>
+          <OtherlinkGuard>
+            <LoggedInLayout>
+              <Profile />
+            </LoggedInLayout>
+          </OtherlinkGuard>
+        </AuthGuard>
+      )} />
+      
+      <Route path="/admin/settings" component={() => (
+        <AuthGuard>
+          <OtherlinkGuard>
+            <LoggedInLayout>
+              <Settings />
+            </LoggedInLayout>
+          </OtherlinkGuard>
         </AuthGuard>
       )} />
       
