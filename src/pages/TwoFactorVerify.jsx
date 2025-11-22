@@ -2,6 +2,7 @@ import { createSignal, onMount, onCleanup } from 'solid-js';
 import { A, useNavigate, useLocation } from '@solidjs/router';
 import { API } from '../api/index.js';
 import { authStore } from '../stores/authStore';
+import { UnauthenticatedNavigation } from '../components/UnauthenticatedNavigation.jsx';
 
 export const TwoFactorVerify = () => {
   const navigate = useNavigate();
@@ -162,7 +163,10 @@ export const TwoFactorVerify = () => {
   return (
     <div class="auth-page">
       <div class="auth-container">
+        <div class="auth-hero"></div>
         <div class="auth-card">
+          <UnauthenticatedNavigation />
+          <div class="auth-card-content">
           <h1>Two-Factor Authentication</h1>
           <p>
             We've sent a 6-digit verification code to your email address
@@ -223,6 +227,7 @@ export const TwoFactorVerify = () => {
           
           <div class="auth-links">
             <A href="/login">← Back to Login</A>
+          </div>
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { GoogleSignInButton } from '../components/GoogleSignInButton';
 import { AppleSignInButton } from '../components/AppleSignInButton';
 import { AccountLinkingModal } from '../components/AccountLinkingModal';
 import { isOAuthConfigured, isAnyOAuthConfigured } from '../config/oauth';
+import { UnauthenticatedNavigation } from '../components/UnauthenticatedNavigation.jsx';
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -105,7 +106,11 @@ export const Register = () => {
   return (
     <div class="auth-page">
       <div class="auth-container">
+        <div class="auth-hero"></div>
         <div class="auth-card">
+          <UnauthenticatedNavigation />
+          <div class="auth-card-content">
+          
           <h1>Create Account</h1>
           <p>Join us and start your journey today.</p>
           
@@ -222,6 +227,7 @@ export const Register = () => {
           <div class="auth-links">
             <p>Already have an account? <A href="/login">Sign in here</A></p>
           </div>
+        </div>
         </div>
       </div>
 

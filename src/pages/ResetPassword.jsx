@@ -1,6 +1,7 @@
 import { createSignal, onMount, Show } from 'solid-js';
 import { A, useSearchParams, useNavigate } from '@solidjs/router';
 import { API } from '../api/index.js';
+import { UnauthenticatedNavigation } from '../components/UnauthenticatedNavigation.jsx';
 
 export const ResetPassword = () => {
   const navigate = useNavigate();
@@ -116,7 +117,10 @@ export const ResetPassword = () => {
   return (
     <div class="auth-page">
       <div class="auth-container">
+        <div class="auth-hero"></div>
         <div class="auth-card">
+          <UnauthenticatedNavigation />
+          <div class="auth-card-content">
           <Show when={isValidating()}>
             <div class="auth-loading">
               <div class="loading-spinner"></div>
@@ -214,6 +218,7 @@ export const ResetPassword = () => {
               <A href="/">← Back to Home</A>
             </div>
           </Show>
+          </div>
         </div>
       </div>
     </div>

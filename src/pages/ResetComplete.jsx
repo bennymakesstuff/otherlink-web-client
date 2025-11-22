@@ -1,10 +1,14 @@
 import { A } from '@solidjs/router';
+import { UnauthenticatedNavigation } from '../components/UnauthenticatedNavigation.jsx';
 
 export const ResetComplete = () => {
   return (
     <div class="auth-page">
       <div class="auth-container">
+        <div class="auth-hero"></div>
         <div class="auth-card">
+          <UnauthenticatedNavigation />
+          <div class="auth-card-content">
           <div class="success-message">
             <div class="success-icon">🎉</div>
             <h1>Password Reset Successful!</h1>
@@ -31,6 +35,7 @@ export const ResetComplete = () => {
             <p>Need help? <a href="mailto:support@yourapp.com">Contact Support</a></p>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

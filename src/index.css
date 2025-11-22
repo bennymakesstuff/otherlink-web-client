@@ -13,8 +13,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
-  color: #333;
-  background-color: #f8f9fa;
+  color: #ffffff;
+  background-color: #bfb5d1;
 }
 
 /* App loading */
@@ -65,9 +65,14 @@ body {
 
 /* Navigation */
 .navigation {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
+  /* background: #17121c; */
+  background-color: transparent;
+  /* border-bottom: 1px solid #705585; */
   padding: 0 1rem;
+}
+
+.unauthenticated-navigation {
+  padding: 1rem 2rem;
 }
 
 .nav-container {
@@ -109,9 +114,9 @@ body {
 }
 
 .nav-brand a {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 700;
-  color: #4f46e5;
+  color: white;
   text-decoration: none;
 }
 
@@ -181,7 +186,7 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 1rem;
+  padding: 1rem;
   border: 1px solid transparent;
   border-radius: 6px;
   font-size: 0.875rem;
@@ -243,23 +248,44 @@ body {
 
 /* Auth pages */
 .auth-page {
-  min-height: calc(100vh - 64px);
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  /* padding: 2rem; */
 }
 
 .auth-container {
   width: 100%;
-  max-width: 400px;
+  display: flex;
+  flex: 1;
+  height: 100vh;
+  align-items: stretch;
 }
 
 .auth-card {
-  background: white;
-  border-radius: 8px;
-  padding: 2rem;
+  background: #363062;
+  color: #ffffff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  flex: 1;
+}
+
+.auth-card-content {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-hero {
+  flex: 1;
+}
+
+@media (max-width: 900px) {
+  .auth-hero {
+    display: none;
+  }
 }
 
 /* Mobile responsiveness for auth pages */
@@ -292,10 +318,12 @@ body {
   
   .auth-form {
     flex: 1;
+    width: 80%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     margin-bottom: 1.5rem;
+    width: 100%;
   }
   
   .form-group input {
@@ -329,17 +357,19 @@ body {
 .auth-card h1 {
   font-size: 1.875rem;
   font-weight: 700;
-  color: #111827;
+  color: #ffffff;
   margin-bottom: 0.5rem;
 }
 
 .auth-card p {
-  color: #6b7280;
+  color: #ffffff;
   margin-bottom: 1.5rem;
 }
 
 .auth-form {
   margin-bottom: 1.5rem;
+  padding: 0 2rem;
+  width: 100%;
 }
 
 .form-group {
@@ -358,7 +388,7 @@ body {
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #374151;
+  color: #ffffff;
   margin-bottom: 0.25rem;
 }
 
@@ -387,7 +417,7 @@ body {
 }
 
 .auth-links a {
-  color: #4f46e5;
+  color: #ffffff;
   text-decoration: none;
   font-size: 0.875rem;
 }
@@ -398,7 +428,7 @@ body {
 
 .auth-links p {
   margin-top: 1rem;
-  color: #6b7280;
+  color: #ffffff;
   font-size: 0.875rem;
 }
 

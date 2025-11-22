@@ -3,7 +3,7 @@ import { Show } from 'solid-js';
 import { authStore } from '../stores/authStore';
 import { UserAvatar } from './UserAvatar';
 
-export const Navigation = () => {
+export const AuthenticatedNavigation = () => {
   const location = useLocation();
   
   const handleLogout = async () => {
@@ -17,7 +17,7 @@ export const Navigation = () => {
       <div class="nav-container">
         <div class="nav-brand">
           <A href={authStore.isAuthenticated ? "/dashboard" : "/"}>
-            Your App
+            Otherlink.
           </A>
         </div>
         

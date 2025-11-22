@@ -1,5 +1,6 @@
 import { A, useLocation } from '@solidjs/router';
 import { createSignal, onMount } from 'solid-js';
+import { UnauthenticatedNavigation } from '../components/UnauthenticatedNavigation.jsx';
 
 export const VerificationSent = () => {
   const location = useLocation();
@@ -16,7 +17,10 @@ export const VerificationSent = () => {
   return (
     <div class="auth-page">
       <div class="auth-container">
+        <div class="auth-hero"></div>
         <div class="auth-card">
+          <UnauthenticatedNavigation />
+          <div class="auth-card-content">
           <div class="success-message">
             <div class="success-icon">📧</div>
             <h1>Check Your Email</h1>
@@ -54,6 +58,7 @@ export const VerificationSent = () => {
               <A href="/login">← Back to Login</A>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>

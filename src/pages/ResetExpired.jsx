@@ -1,10 +1,14 @@
 import { A } from '@solidjs/router';
+import { UnauthenticatedNavigation } from '../components/UnauthenticatedNavigation.jsx';
 
 export const ResetExpired = () => {
   return (
     <div class="auth-page">
       <div class="auth-container">
+        <div class="auth-hero"></div>
         <div class="auth-card">
+          <UnauthenticatedNavigation />
+          <div class="auth-card-content">
           <div class="error-state">
             <div class="error-icon">⏰</div>
             <h1>Reset Link Expired</h1>
@@ -44,6 +48,7 @@ export const ResetExpired = () => {
             <A href="/">← Back to Home</A>
             <p>Need assistance? <a href="mailto:support@yourapp.com">Contact Support</a></p>
           </div>
+        </div>
         </div>
       </div>
     </div>

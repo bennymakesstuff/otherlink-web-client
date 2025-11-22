@@ -1,6 +1,7 @@
 import { createSignal, onMount, Show } from 'solid-js';
 import { A, useSearchParams, useNavigate } from '@solidjs/router';
 import { API } from '../api/index.js';
+import { UnauthenticatedNavigation } from '../components/UnauthenticatedNavigation.jsx';
 
 export const VerifyEmail = () => {
   const navigate = useNavigate();
@@ -46,7 +47,10 @@ export const VerifyEmail = () => {
   return (
     <div class="auth-page">
       <div class="auth-container">
+        <div class="auth-hero"></div>
         <div class="auth-card">
+          <UnauthenticatedNavigation />
+          <div class="auth-card-content">
           <Show when={isVerifying()}>
             <div class="auth-loading">
               <div class="loading-spinner"></div>
@@ -98,6 +102,7 @@ export const VerifyEmail = () => {
               </div>
             </div>
           </Show>
+        </div>
         </div>
       </div>
     </div>

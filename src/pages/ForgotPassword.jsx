@@ -1,6 +1,7 @@
 import { createSignal } from 'solid-js';
 import { A } from '@solidjs/router';
 import { API } from '../api/index.js';
+import { UnauthenticatedNavigation } from '../components/UnauthenticatedNavigation.jsx';
 
 export const ForgotPassword = () => {
   const [username, setUsername] = createSignal('');
@@ -28,7 +29,10 @@ export const ForgotPassword = () => {
   return (
     <div class="auth-page">
       <div class="auth-container">
+        <div class="auth-hero"></div>
         <div class="auth-card">
+          <UnauthenticatedNavigation />
+          <div class="auth-card-content">
           <h1>Reset Password</h1>
           
           {!requestSent() ? (
@@ -90,6 +94,7 @@ export const ForgotPassword = () => {
           <div class="auth-links">
             <A href="/login">← Back to Login</A>
             <p>Remember your password? <A href="/login">Sign in</A></p>
+          </div>
           </div>
         </div>
       </div>
