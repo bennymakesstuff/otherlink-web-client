@@ -135,5 +135,14 @@ export class OtherlinkApi extends BaseApi {
 
     return this.get(`/links/otherlink/${otherlinkId}?${params.toString()}`);
   }
+
+  /**
+   * Get an otherlink by display name (public endpoint)
+   * @param {string} displayName - The display name to look up
+   * @returns {Promise<Object>} - {otherlink, display_name, links}
+   */
+  async getOtherlinkByDisplayName(displayName) {
+    return this.get(`/public/otherlink/${encodeURIComponent(displayName)}`);
+  }
 }
 

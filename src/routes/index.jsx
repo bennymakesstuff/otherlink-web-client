@@ -28,6 +28,7 @@ const Profile = lazy(() => import('../pages/Profile').then(m => ({ default: m.Pr
 const Settings = lazy(() => import('../pages/Settings').then(m => ({ default: m.Settings })));
 const LoginTest = lazy(() => import('../components/LoginTest').then(m => ({ default: m.LoginTest })));
 const AuthTest = lazy(() => import('../pages/AuthTest').then(m => ({ default: m.AuthTest })));
+const OtherlinkLandingPage = lazy(() => import('../pages/OtherlinkLandingPage').then(m => ({ default: m.OtherlinkLandingPage })));
 
 // Layout wrapper component that conditionally shows navigation
 const AppLayout = (props) => {
@@ -143,6 +144,9 @@ export const AppRouter = () => {
           </OtherlinkGuard>
         </AuthGuard>
       )} />
+      
+      {/* Public otherlink landing page - Must be before catch-all */}
+      <Route path="/:displayName" component={OtherlinkLandingPage} />
       
       {/* Catch-all route for 404 */}
       <Route path="/*all" component={NotFound} />
