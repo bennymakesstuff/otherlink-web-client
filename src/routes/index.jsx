@@ -1,5 +1,5 @@
-import { Router, Route } from '@solidjs/router';
-import { lazy } from 'solid-js';
+import { Router, Route, useLocation } from '@solidjs/router';
+import { lazy, Show } from 'solid-js';
 
 // Guards
 import { AuthGuard, GuestGuard } from '../components/AuthGuard';
@@ -29,23 +29,22 @@ const Settings = lazy(() => import('../pages/Settings').then(m => ({ default: m.
 const LoginTest = lazy(() => import('../components/LoginTest').then(m => ({ default: m.LoginTest })));
 const AuthTest = lazy(() => import('../pages/AuthTest').then(m => ({ default: m.AuthTest })));
 
-// Layout wrapper component
-const LoggedOutLayout = (props) => (
-  <div class="app-layout">
-    <main class="main-content">
-      {props.children}
-    </main>
-  </div>
-);
-
-const LoggedInLayout = (props) => (
-  <div class="app-layout">
-    <AuthenticatedNavigation />
-    <main class="main-content">
-      {props.children}
-    </main>
-  </div>
-);
+// Layout wrapper component that conditionally shows navigation
+const AppLayout = (props) => {
+  const location = useLocation();
+  const isAdminRoute = () => location.pathname.startsWith('/admin');
+  
+  return (
+    <div class="app-layout">
+      <Show when={isAdminRoute()}>
+        <AuthenticatedNavigation />
+      </Show>
+      <main class="main-content">
+        {props.children}
+      </main>
+    </div>
+  );
+};
 
 // 404 Not Found component
 const NotFound = () => (
@@ -58,96 +57,49 @@ const NotFound = () => (
 
 export const AppRouter = () => {
   return (
-    <Router>
-      <Route path="/" component={() => (
-        <LoggedOutLayout>
-          <Home />
-        </LoggedOutLayout>
-      )} />
-      
-      <Route path="/test-login" component={() => (
-        <LoggedOutLayout>
-          <LoginTest />
-        </LoggedOutLayout>
-      )} />
-      
-      <Route path="/auth-test" component={() => (
-        <LoggedOutLayout>
-          <AuthTest />
-        </LoggedOutLayout>
-      )} />
+    <Router root={AppLayout}>
+      {/* Public routes */}
+      <Route path="/" component={Home} />
+      <Route path="/test-login" component={LoginTest} />
+      <Route path="/auth-test" component={AuthTest} />
       
       {/* Guest-only routes (unauthenticated users only) */}
       <Route path="/login" component={() => (
         <GuestGuard>
-          <LoggedOutLayout>
-            <Login />
-          </LoggedOutLayout>
+          <Login />
         </GuestGuard>
       )} />
       
       <Route path="/register" component={() => (
         <GuestGuard>
-          <LoggedOutLayout>
-            <Register />
-          </LoggedOutLayout>
+          <Register />
         </GuestGuard>
       )} />
       
       <Route path="/forgot-password" component={() => (
         <GuestGuard>
-          <LoggedOutLayout>
-            <ForgotPassword />
-          </LoggedOutLayout>
+          <ForgotPassword />
         </GuestGuard>
       )} />
       
       <Route path="/reset-password" component={() => (
         <GuestGuard>
-          <LoggedOutLayout>
-            <ResetPassword />
-          </LoggedOutLayout>
+          <ResetPassword />
         </GuestGuard>
       )} />
       
-      <Route path="/reset-complete" component={() => (
-        <LoggedOutLayout>
-          <ResetComplete />
-        </LoggedOutLayout>
-      )} />
-      
-      <Route path="/reset-expired" component={() => (
-        <LoggedOutLayout>
-          <ResetExpired />
-        </LoggedOutLayout>
-      )} />
-      
-      <Route path="/verification-sent" component={() => (
-        <LoggedOutLayout>
-          <VerificationSent />
-        </LoggedOutLayout>
-      )} />
-      
-      <Route path="/verify-email" component={() => (
-        <LoggedOutLayout>
-          <VerifyEmail />
-        </LoggedOutLayout>
-      )} />
-      
-      <Route path="/2fa-verify" component={() => (
-        <LoggedOutLayout>
-          <TwoFactorVerify />
-        </LoggedOutLayout>
-      )} />
+      <Route path="/reset-complete" component={ResetComplete} />
+      <Route path="/reset-expired" component={ResetExpired} />
+      <Route path="/verification-sent" component={VerificationSent} />
+      <Route path="/verify-email" component={VerifyEmail} />
+      <Route path="/2fa-verify" component={TwoFactorVerify} />
       
       {/* Protected routes (authenticated users only) - All nested under /admin */}
       
       {/* Create Otherlink - No OtherlinkGuard (this is where they create their first one) */}
       <Route path="/admin/create-otherlink" component={() => (
         <AuthGuard>
-          <LoggedInLayout>
-            <CreateOtherlink />
-          </LoggedInLayout>
+          <CreateOtherlink />
         </AuthGuard>
       )} />
       
@@ -155,9 +107,7 @@ export const AppRouter = () => {
       <Route path="/admin/dashboard" component={() => (
         <AuthGuard>
           <OtherlinkGuard>
-            <LoggedInLayout>
-              <Dashboard />
-            </LoggedInLayout>
+            <Dashboard />
           </OtherlinkGuard>
         </AuthGuard>
       )} />
@@ -165,9 +115,7 @@ export const AppRouter = () => {
       <Route path="/admin/otherlinks" component={() => (
         <AuthGuard>
           <OtherlinkGuard>
-            <LoggedInLayout>
-              <Otherlinks />
-            </LoggedInLayout>
+            <Otherlinks />
           </OtherlinkGuard>
         </AuthGuard>
       )} />
@@ -175,9 +123,7 @@ export const AppRouter = () => {
       <Route path="/admin/links" component={() => (
         <AuthGuard>
           <OtherlinkGuard>
-            <LoggedInLayout>
-              <Links />
-            </LoggedInLayout>
+            <Links />
           </OtherlinkGuard>
         </AuthGuard>
       )} />
@@ -185,9 +131,7 @@ export const AppRouter = () => {
       <Route path="/admin/profile" component={() => (
         <AuthGuard>
           <OtherlinkGuard>
-            <LoggedInLayout>
-              <Profile />
-            </LoggedInLayout>
+            <Profile />
           </OtherlinkGuard>
         </AuthGuard>
       )} />
@@ -195,19 +139,13 @@ export const AppRouter = () => {
       <Route path="/admin/settings" component={() => (
         <AuthGuard>
           <OtherlinkGuard>
-            <LoggedInLayout>
-              <Settings />
-            </LoggedInLayout>
+            <Settings />
           </OtherlinkGuard>
         </AuthGuard>
       )} />
       
       {/* Catch-all route for 404 */}
-      <Route path="/*all" component={() => (
-        <LoggedInLayout>
-          <NotFound />
-        </LoggedInLayout>
-      )} />
+      <Route path="/*all" component={NotFound} />
     </Router>
   );
 };
