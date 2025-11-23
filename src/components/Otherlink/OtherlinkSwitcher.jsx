@@ -57,10 +57,29 @@ export function OtherlinkSwitcher(props) {
     }
   };
 
+  console.log(otherlinkStore.selectedOtherlink());
+
   return (
     <div class="otherlink-switcher">
-      <label class="switcher-label">Viewing Dashboard:</label>
-      
+    <div class="switcher-labels">
+        <div class="switcher-label">Viewing OtherLink</div>
+        <div class="switcher-label">
+            
+        </div>
+        <div class="preview-header">
+        <Show when={otherlinkStore.selectedOtherlink()?.display_name}>
+          <a 
+            href={getPreviewUrl()} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="preview-link"
+          >
+            View Live →
+          </a>
+        </Show>
+      </div>
+
+    </div>
       <div class="switcher-dropdown" ref={dropdownRef}>
         <button 
           class="switcher-button" 

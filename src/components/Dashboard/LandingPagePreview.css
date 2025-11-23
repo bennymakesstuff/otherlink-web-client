@@ -1,0 +1,149 @@
+.landing-preview-card {
+  background: transparent;
+  padding: 0rem;
+  color: #3d3d3d;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.preview-header h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 1.1rem;
+}
+
+.preview-link {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.preview-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+.preview-loading,
+.preview-empty {
+  text-align: center;
+  padding: 2rem;
+  color: #9ca3af;
+}
+
+.preview-container {
+  display: flex;
+  justify-content: center;
+  padding: 0;
+}
+
+.preview-phone {
+  width: 100%;
+  max-width: 320px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.preview-phone-header {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  color: white;
+}
+
+.preview-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: white;
+  color: #667eea;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 auto 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.preview-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+  color: white;
+}
+
+.preview-description {
+  font-size: 0.85rem;
+  margin: 0 0 0.5rem;
+  opacity: 0.95;
+  line-height: 1.4;
+}
+
+.preview-handle {
+  font-size: 0.8rem;
+  opacity: 0.9;
+  margin: 0;
+  font-weight: 500;
+}
+
+.preview-links {
+  background: white;
+  padding: 1rem;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.preview-no-links {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.preview-link-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.preview-link-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.preview-link-name {
+  font-weight: 500;
+  color: #1f2937;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-more {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.85rem;
+  margin: 0.5rem 0 0;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .preview-phone {
+    max-width: 100%;
+  }
+}
+

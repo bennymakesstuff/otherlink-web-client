@@ -1,5 +1,6 @@
 /* Import component styles */
 @import './styles/links.css';
+@import './components/Dashboard/LandingPagePreview.css';
 
 /* Reset and base styles */
 * {
@@ -16,8 +17,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
-  color: #ffffff;
-  background-color: #bfb5d1;
+  color: #333333;
+  background-color: #ffffff;
 }
 
 /* App loading */
@@ -125,7 +126,7 @@ body {
 .nav-brand a {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #1f2937;
+  color: white;
   text-decoration: none;
 }
 
@@ -867,11 +868,14 @@ body {
 
 /* Dashboard */
 .dashboard-page {
-  padding: 2rem;
+  /* padding: 2rem; */
+  display: flex;
+  flex-direction: column;
 }
 
 .dashboard-header {
-  margin-bottom: 2rem;
+  padding: 2rem;
+  border-bottom: 1px solid #e3e3e3;
 }
 
 .dashboard-header h1 {
@@ -880,10 +884,45 @@ body {
   margin-bottom: 0.5rem;
 }
 
+.dashboard-content {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  /* gap: 2rem; */
+  /* margin-bottom: 2rem; */
+}
+
+.dashboard-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  background-color: #fafafa;
+  border-right: 1px solid #e3e3e3;
+}
+
+.dashboard-main {
+  flex: 1;
+  padding: 2rem;
+}
+
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
+}
+
+.dashboard-footer {
+  padding-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-content {
+    grid-template-columns: 1fr;
+  }
 }
 
 .dashboard-card {
