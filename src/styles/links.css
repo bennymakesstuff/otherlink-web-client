@@ -445,6 +445,18 @@
   font-size: 0.95rem;
 }
 
+/* Ensure modal labels are visible on white background */
+.modal-content .form-label,
+.link-form-modal .form-label,
+.form-label.modal-label {
+  color: #374151;
+}
+
+.modal-content .form-help,
+.form-help.modal-help {
+  color: #6b7280;
+}
+
 .required {
   color: #dc3545;
 }

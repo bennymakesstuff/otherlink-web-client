@@ -2210,3 +2210,161 @@ body {
   color: var(--text-secondary);
   margin-bottom: 1.5rem;
 }
+
+/* Dev Panel FAB and Panel */
+.dev-fab {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #1f2937;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s ease;
+  z-index: 1000;
+}
+
+.dev-fab:hover {
+  background: #374151;
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.dev-panel {
+  position: fixed;
+  bottom: 5rem;
+  right: 1.5rem;
+  width: 320px;
+  max-height: 70vh;
+  background: #1f2937;
+  color: #f3f4f6;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  z-index: 999;
+  overflow: hidden;
+  animation: slideUp 0.2s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dev-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: #111827;
+  border-bottom: 1px solid #374151;
+}
+
+.dev-panel-header h3 {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #f9fafb;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dev-panel-header h3::before {
+  content: '🛠';
+}
+
+.dev-panel-close {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.dev-panel-close:hover {
+  background: #374151;
+  color: #f9fafb;
+}
+
+.dev-panel-content {
+  padding: 1rem;
+  max-height: calc(70vh - 56px);
+  overflow-y: auto;
+}
+
+.dev-section {
+  margin-bottom: 1.25rem;
+}
+
+.dev-section:last-child {
+  margin-bottom: 0;
+}
+
+.dev-section h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dev-section .status-info {
+  background: #111827;
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.dev-section .status-item {
+  font-size: 0.8rem;
+  color: #d1d5db;
+}
+
+.dev-info {
+  background: #111827;
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.dev-info p {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.8rem;
+  color: #d1d5db;
+  word-break: break-all;
+}
+
+.dev-info p:last-child {
+  margin-bottom: 0;
+}
+
+.dev-info strong {
+  color: #9ca3af;
+}
+
+@media (max-width: 640px) {
+  .dev-panel {
+    width: calc(100% - 3rem);
+    left: 1.5rem;
+    right: 1.5rem;
+  }
+}

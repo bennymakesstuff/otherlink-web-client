@@ -128,6 +128,8 @@
   text-align: left;
   width: 100%;
   font-family: inherit;
+  text-decoration: none;
+  color: inherit;
 }
 
 .landing-link-card:hover {
@@ -236,4 +238,5 @@
     font-size: 1rem;
   }
 }
+
 

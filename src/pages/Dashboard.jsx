@@ -1,14 +1,14 @@
 import { A, useNavigate } from '@solidjs/router';
-import { Show, onMount } from 'solid-js';
+import { Show, onMount, createSignal } from 'solid-js';
 import { authStore } from '../stores/authStore';
 import { otherlinkStore } from '../stores/otherlinkStore';
 import { OtherlinkSwitcher } from '../components/Otherlink/OtherlinkSwitcher';
-import { RecentLinks } from '../components/Dashboard/RecentLinks';
 import { LandingPagePreview } from '../components/Dashboard/LandingPagePreview';
 
 export const Dashboard = () => {
   const navigate = useNavigate();
   const user = () => authStore.user;
+  const [devPanelOpen, setDevPanelOpen] = createSignal(false);
   
   onMount(() => {
     // Load otherlinks on dashboard mount
@@ -67,12 +67,7 @@ export const Dashboard = () => {
                 <p><strong>Total Links:</strong> {otherlinkStore.selectedOtherlink()?.link_count || 0}</p>
                 <p><strong>Active Links:</strong> {otherlinkStore.selectedOtherlink()?.active_link_count || 0}</p>
               </div>
-              <button class="btn btn-secondary" onClick={handleManageOtherlinks}>
-                Manage OtherLinks
-              </button>
             </div>
-            
-            <RecentLinks />
             
             <div class="dashboard-card">
               <h3>Quick Actions</h3>
@@ -125,8 +120,34 @@ export const Dashboard = () => {
               </div>
             </div>
           
-            <div class="dashboard-card">
-              <h3>System Status</h3>
+          </div>
+        </main>
+      </div>
+
+      {/* PAGE FOOTER */}
+      <footer class="dashboard-footer">
+        <p>&copy; 2024 Otherlink. All rights reserved.</p>
+      </footer>
+
+      {/* DEV PANEL FAB */}
+      <button 
+        class="dev-fab"
+        onClick={() => setDevPanelOpen(!devPanelOpen())}
+        title="Toggle Dev Panel"
+      >
+        {devPanelOpen() ? '✕' : '🛠'}
+      </button>
+
+      {/* DEV PANEL */}
+      <Show when={devPanelOpen()}>
+        <div class="dev-panel">
+          <div class="dev-panel-header">
+            <h3>Dev Panel</h3>
+            <button class="dev-panel-close" onClick={() => setDevPanelOpen(false)}>✕</button>
+          </div>
+          <div class="dev-panel-content">
+            <div class="dev-section">
+              <h4>System Status</h4>
               <div class="status-info">
                 <div class="status-item">
                   <span class="status-indicator status-good"></span>
@@ -138,14 +159,25 @@ export const Dashboard = () => {
                 </div>
               </div>
             </div>
+            <div class="dev-section">
+              <h4>User Info</h4>
+              <div class="dev-info">
+                <p><strong>ID:</strong> {user()?.id || 'N/A'}</p>
+                <p><strong>Username:</strong> {user()?.username || 'N/A'}</p>
+                <p><strong>Roles:</strong> {getUserRoles()}</p>
+                <p><strong>2FA:</strong> {user()?.two_factor_enabled ? 'Enabled' : 'Disabled'}</p>
+              </div>
+            </div>
+            <div class="dev-section">
+              <h4>Selected OtherLink</h4>
+              <div class="dev-info">
+                <p><strong>ID:</strong> {otherlinkStore.selectedOtherlinkId() || 'None'}</p>
+                <p><strong>Name:</strong> {otherlinkStore.selectedOtherlink()?.name || 'None'}</p>
+              </div>
+            </div>
           </div>
-        </main>
-      </div>
-
-      {/* PAGE FOOTER */}
-      <footer class="dashboard-footer">
-        <p>&copy; 2024 Otherlink. All rights reserved.</p>
-      </footer>
+        </div>
+      </Show>
     </div>
   );
 };

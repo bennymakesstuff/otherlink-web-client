@@ -28,84 +28,76 @@ export class LinkApi extends BaseApi {
   }
 
   /**
-   * Get recent links for a specific otherlink (for dashboard widget)
-   * @param {string} otherlinkId - The otherlink ID (UUID)
+   * Get recent links for dashboard widget (global, not per-otherlink)
    * @param {number} limit - Number of links to retrieve (default 5)
    * @returns {Promise<Object>} - {links}
    */
-  async getRecentLinks(otherlinkId, limit = 5) {
-    return this.get(`/links/otherlink/${otherlinkId}/recent?limit=${limit}`);
+  async getRecentLinks(limit = 5) {
+    return this.get(`/links/recent?limit=${limit}`);
   }
 
   /**
    * Get a specific link by ID
-   * @param {string} otherlinkId - The otherlink ID (UUID)
    * @param {string} linkId - The link ID (UUID)
    * @returns {Promise<Object>} - {link}
    */
-  async getLink(otherlinkId, linkId) {
-    return this.get(`/links/otherlink/${otherlinkId}/${linkId}`);
+  async getLink(linkId) {
+    return this.get(`/links/${linkId}`);
   }
 
   /**
    * Create a new link
-   * @param {string} otherlinkId - The otherlink ID (UUID)
-   * @param {Object} linkData - {name, description, shortcode, url, link_type, active}
+   * @param {Object} linkData - {name, description, shortcode, url, link_type, active, otherlink_id}
    * @returns {Promise<Object>} - {link}
    */
-  async createLink(otherlinkId, linkData) {
-    return this.post(`/links/otherlink/${otherlinkId}`, linkData);
+  async createLink(linkData) {
+    return this.post(`/links`, linkData);
   }
 
   /**
    * Update an existing link
-   * @param {string} otherlinkId - The otherlink ID (UUID)
    * @param {string} linkId - The link ID (UUID)
    * @param {Object} linkData - Fields to update
    * @returns {Promise<Object>} - {link}
    */
-  async updateLink(otherlinkId, linkId, linkData) {
-    return this.put(`/links/otherlink/${otherlinkId}/${linkId}`, linkData);
+  async updateLink(linkId, linkData) {
+    return this.put(`/links/${linkId}`, linkData);
   }
 
   /**
    * Delete a link
-   * @param {string} otherlinkId - The otherlink ID (UUID)
    * @param {string} linkId - The link ID (UUID)
    * @returns {Promise<Object>} - Success response
    */
-  async deleteLink(otherlinkId, linkId) {
-    return this.delete(`/links/otherlink/${otherlinkId}/${linkId}`);
+  async deleteLink(linkId) {
+    return this.delete(`/links/${linkId}`);
   }
 
   /**
-   * Check if a shortcode is available within an otherlink
-   * @param {string} otherlinkId - The otherlink ID (UUID)
+   * Check if a shortcode is available (global, not per-otherlink)
    * @param {string} shortcode - The shortcode to check
    * @param {string} excludeLinkId - Optional link ID to exclude from check (for editing)
    * @returns {Promise<Object>} - {shortcode, available}
    */
-  async checkShortcode(otherlinkId, shortcode, excludeLinkId = null) {
+  async checkShortcode(shortcode, excludeLinkId = null) {
     const params = excludeLinkId ? `?exclude=${excludeLinkId}` : '';
-    return this.get(`/links/otherlink/${otherlinkId}/check-shortcode/${shortcode}${params}`);
+    return this.get(`/links/shortcode/${shortcode}${params}`);
   }
 
   /**
-   * Generate a unique shortcode for an otherlink
-   * @param {string} otherlinkId - The otherlink ID (UUID)
+   * Generate a unique shortcode from a name
+   * @param {string} name - The name to generate shortcode from
    * @returns {Promise<Object>} - {shortcode}
    */
-  async generateShortcode(otherlinkId) {
-    return this.post(`/links/otherlink/${otherlinkId}/generate-shortcode`, {});
+  async generateShortcode(name) {
+    return this.post(`/links/generate-shortcode`, { name });
   }
 
   /**
-   * Get link statistics for a specific otherlink
-   * @param {string} otherlinkId - The otherlink ID (UUID)
+   * Get link statistics for the user
    * @returns {Promise<Object>} - {stats: {total, active, inactive, by_type}}
    */
-  async getLinkStats(otherlinkId) {
-    return this.get(`/links/otherlink/${otherlinkId}/stats`);
+  async getLinkStats() {
+    return this.get(`/links/stats/summary`);
   }
 }
-

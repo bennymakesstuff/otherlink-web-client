@@ -57,7 +57,12 @@ export function OtherlinkSwitcher(props) {
     }
   };
 
-  console.log(otherlinkStore.selectedOtherlink());
+  const getPreviewUrl = () => {
+    const displayName = otherlinkStore.selectedOtherlink()?.display_name;
+    if (!displayName) return '#';
+    // Use the current origin for the public otherlink page
+    return `${window.location.origin}/${displayName}`;
+  };
 
   return (
     <div class="otherlink-switcher">

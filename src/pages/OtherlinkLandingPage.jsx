@@ -55,11 +55,6 @@ export function OtherlinkLandingPage() {
     }
   };
 
-  const handleLinkClick = (link) => {
-    // Open link in new tab
-    window.open(link.url, '_blank', 'noopener,noreferrer');
-  };
-
   return (
     <div class="landing-page">
       <Show
@@ -105,9 +100,11 @@ export function OtherlinkLandingPage() {
               >
                 <For each={links()}>
                   {(link) => (
-                    <button
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       class="landing-link-card"
-                      onClick={() => handleLinkClick(link)}
                     >
                       <span class="link-icon">{getLinkIcon(link.link_type)}</span>
                       <div class="link-content">
@@ -117,7 +114,7 @@ export function OtherlinkLandingPage() {
                         </Show>
                       </div>
                       <span class="link-arrow">→</span>
-                    </button>
+                    </a>
                   )}
                 </For>
               </Show>
@@ -134,4 +131,5 @@ export function OtherlinkLandingPage() {
     </div>
   );
 }
+
 

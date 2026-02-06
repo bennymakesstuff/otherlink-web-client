@@ -57,12 +57,6 @@ export const AuthenticatedNavigation = () => {
                   OtherLinks
                 </A>
                 <A 
-                  href="/admin/links" 
-                  class={`nav-link ${location.pathname === '/admin/links' ? 'active' : ''}`}
-                >
-                  Links
-                </A>
-                <A 
                   href="/admin/profile" 
                   class={`nav-link ${location.pathname === '/admin/profile' ? 'active' : ''}`}
                 >
